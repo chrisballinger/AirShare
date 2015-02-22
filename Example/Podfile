@@ -1,0 +1,10 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+target 'AirShareTests', :exclusive => true do
+  pod "AirShare/UIKit", :path => "../"
+end
+
+target 'AirShareDemo', :exclusive => true do
+  pod "AirShare/UIKit", :path => "../"
+end
+
