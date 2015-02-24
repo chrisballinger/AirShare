@@ -95,7 +95,7 @@ errorEstablishingSession:(NSError*)error {
 
 - (void) sessionManager:(BLESessionManager *)sessionManager
                    peer:(BLEPeer *)peer
-          statusUpdated:(BLEPeerStatus)status {
+          statusUpdated:(BLEConnectionStatus)status {
     NSUInteger index = [self.peers indexOfObjectPassingTest:^BOOL(BLEPeer *testPeer, NSUInteger idx, BOOL *stop) {
         if ([peer.publicKey isEqual:testPeer.publicKey]) {
             *stop = YES;

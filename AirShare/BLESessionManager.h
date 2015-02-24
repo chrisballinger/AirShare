@@ -13,12 +13,6 @@
 
 @class BLESessionManager;
 
-typedef NS_ENUM(NSInteger, BLEPeerStatus) {
-    BLEPeerStatusDisconnected,
-    BLEPeerStatusConnecting,
-    BLEPeerStatusConnected
-};
-
 @protocol BLESessionManagerDelegate <NSObject>
 - (void) sessionManager:(BLESessionManager*)sessionManager
 errorEstablishingSession:(NSError*)error;
@@ -28,7 +22,7 @@ errorEstablishingSession:(NSError*)error;
 
 - (void) sessionManager:(BLESessionManager *)sessionManager
                    peer:(BLEPeer *)peer
-          statusUpdated:(BLEPeerStatus)status;
+          statusUpdated:(BLEConnectionStatus)status;
 
 @end
 

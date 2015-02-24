@@ -9,7 +9,17 @@
 #import <Foundation/Foundation.h>
 #import "BLEPeer.h"
 
+typedef NS_ENUM (NSInteger ,
+                 BLETransportSendDataMode ) {
+    BLETransportSendDataReliable,
+    BLETransportSendDataUnreliable
+};
 
+typedef NS_ENUM(NSInteger, BLEConnectionStatus) {
+    BLEConnectionStatusDisconnected,
+    BLEConnectionStatusConnecting,
+    BLEConnectionStatusConnected
+};
 
 @class BLETransport;
 
@@ -17,28 +27,34 @@
 
 - (void) transport:(BLETransport*)transport
       dataReceived:(NSData*)data
-          fromPeer:(BLEPeer*)peer;
+    fromIdentifier:(NSString*)identifier;
 
 - (void) transport:(BLETransport*)transport
-       peerUpdated:(BLEPeer*)peer
-              RSSI:(NSNumber*)RSSI;
+          dataSent:(NSData*)data
+      toIdentifier:(NSString*)identifier
+             error:(NSError*)error;
+
+- (void) transport:(BLETransport*)transport
+ identifierUpdated:(NSString*)identifier
+  connectionStatus:(BLEConnectionStatus)connectionStatus
+         extraInfo:(NSDictionary*)extraInfo;
 
 @end
 
 @protocol BLETransport <NSObject>
 
-- (void) sendData:(NSData*)data
-          toPeers:(NSArray*)peers;
+- (BOOL) sendData:(NSData*)data
+    toIdentifiers:(NSArray*)identifiers
+         withMode:(BLETransportSendDataMode)mode
+            error:(NSError**)error;
 
-- (void) advertiseLocalPeer;
-- (void) scanForPeers;
+- (void) advertise;
+- (void) scan;
 
-- (instancetype) initWithLocalPeer:(BLEPeer*)localPeer
-                          delegate:(id<BLETransportDelegate>)delegate;
+- (instancetype) initWithDelegate:(id<BLETransportDelegate>)delegate;
 
 @property (nonatomic, weak) id<BLETransportDelegate> delegate;
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;
-@property (nonatomic, strong, readonly) BLEPeer *localPeer;
 
 @end
 
