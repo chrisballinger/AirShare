@@ -6,12 +6,12 @@
 //
 //
 
-#import "BLEMessageSerialization.h"
+#import "BLESessionMessageReceiver.h"
 #import "BLEFileTransferMessage.h"
 #import "BLEDataMessage.h"
 #import "BLEIdentityMessage.h"
 
-@interface BLEMessageSerialization ()
+@interface BLESessionMessageReceiver ()
 @property (nonatomic, strong) NSData *prefixData;
 @property (nonatomic, strong) NSMutableData *headerData;
 @property (nonatomic, strong) NSDictionary *headers;
@@ -23,9 +23,9 @@
 @property (nonatomic, strong) NSMutableData *incomingDataMessagePayload;
 @end
 
-@implementation BLEMessageSerialization
+@implementation BLESessionMessageReceiver
 
-- (instancetype) initWithDelegate:(id<BLEMessageSerializationDelegate>)delegate {
+- (instancetype) initWithDelegate:(id<BLESessionMessageReceiverDelegate>)delegate {
     if (self = [super init]) {
         _callbackQueue = dispatch_get_main_queue();
         _delegate = delegate;
@@ -80,7 +80,12 @@
         if (sessionMessage) {
             _sessionMessage = sessionMessage;
             dispatch_async(self.callbackQueue, ^{
-                [self.delegate serialization:self headerComplete:sessionMessage];
+                [self.delegate receiver:self headerComplete:sessionMessage];
+            });
+        }
+        if ([sessionMessage isKindOfClass:[BLEIdentityMessage class]]) {
+            dispatch_async(self.callbackQueue, ^{
+                [self.delegate receiver:self transferComplete:sessionMessage];
             });
         }
     }
@@ -95,13 +100,13 @@
                 if (self.incomingDataMessagePayload.length < dataMessage.payloadLength) {
                     float progress = (float)self.incomingDataMessagePayload.length / (float)dataMessage.payloadLength;
                     dispatch_async(self.callbackQueue, ^{
-                        [self.delegate serialization:self message:dataMessage incomingData:data progress:progress];
+                        [self.delegate receiver:self message:dataMessage incomingData:data progress:progress];
                     });
                 } else if (self.incomingDataMessagePayload.length == dataMessage.payloadLength) {
                     dataMessage.data = self.incomingDataMessagePayload;
                     self.incomingDataMessagePayload = nil;
                     dispatch_async(self.callbackQueue, ^{
-                        [self.delegate serialization:self transferComplete:dataMessage];
+                        [self.delegate receiver:self transferComplete:dataMessage];
                     });
                 }
             }

@@ -23,7 +23,7 @@
     return self;
 }
 
-- (NSData*) serialize {
+- (NSData*) serializedData {
     if (!self.serializedMessage) {
         NSData *prefixData = [self serializePrefixData];
         NSParameterAssert(prefixData.length > 0);

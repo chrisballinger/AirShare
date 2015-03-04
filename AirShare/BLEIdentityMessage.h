@@ -12,7 +12,11 @@
 @interface BLEIdentityMessage : BLESessionMessage
 
 @property (nonatomic, strong) NSData *publicKey;
+@property (nonatomic, strong) NSString *alias;
 
 - (instancetype) initWithPeer:(BLEPeer*)peer;
 
 @end
+
+extern NSString * const kBLEIdentityMessageHeaderPublicKey;
+extern NSString * const kBLEIdentityMessageHeaderAliasKey;

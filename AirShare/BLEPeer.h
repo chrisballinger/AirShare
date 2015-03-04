@@ -11,10 +11,14 @@
 /** Serves as unique identifier */
 @property (nonatomic, strong, readonly) NSData *publicKey;
 
+@property (nonatomic, strong) NSString *alias;
+
 /** May be nil if transport doesn't support signal strength */
 @property (nonatomic, strong, readonly) NSNumber *RSSI;
 
 /** Last time peer has been seen */
 @property (nonatomic, strong, readonly) NSDate *lastSeenDate;
+
+- (instancetype) initWithPublicKey:(NSData*)publicKey;
 
 @end

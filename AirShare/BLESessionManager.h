@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BLEPeer.h"
+#import "BLELocalPeer.h"
 #import "BLESession.h"
 #import "BLETransport.h"
 
@@ -28,11 +28,11 @@ errorEstablishingSession:(NSError*)error;
 
 @interface BLESessionManager : NSObject <BLETransportDelegate>
 
-@property (nonatomic, strong, readonly) BLEPeer *localPeer;
+@property (nonatomic, strong, readonly) BLELocalPeer *localPeer;
 @property (nonatomic, weak) id<BLESessionManagerDelegate> delegate;
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;
 
-- (instancetype) initWithLocalPeer:(BLEPeer*)localPeer delegate:(id<BLESessionManagerDelegate>)delegate;
+- (instancetype) initWithLocalPeer:(BLELocalPeer*)localPeer delegate:(id<BLESessionManagerDelegate>)delegate;
 
 - (void) advertiseLocalPeer;
 

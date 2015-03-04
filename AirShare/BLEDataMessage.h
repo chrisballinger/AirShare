@@ -14,7 +14,4 @@
 
 - (instancetype) initWithData:(NSData*)data;
 
-/** serializes full message (fits in memory) */
-- (NSData*) serialize;
-
 @end

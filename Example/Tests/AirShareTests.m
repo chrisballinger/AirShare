@@ -9,12 +9,15 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import "BLEDataMessage.h"
-#import "BLEMessageSerialization.h"
+#import "BLESessionMessageReceiver.h"
+#import "BLEIdentityMessage.h"
+#import "BLECrypto.h"
 
-@interface AirShareTests : XCTestCase <BLEMessageSerializationDelegate>
-@property (nonatomic, strong) BLEMessageSerialization *serialization;
+@interface AirShareTests : XCTestCase <BLESessionMessageReceiverDelegate>
+@property (nonatomic, strong) BLESessionMessageReceiver *receiver;
 @property (nonatomic, strong) XCTestExpectation *expectation;
-@property (nonatomic, strong) BLESessionMessage *outgoingSessionMessage;
+@property (nonatomic, strong) BLEDataMessage *outgoingDataMessage;
+@property (nonatomic, strong) BLEIdentityMessage *outgoingIdentityMessage;
 @end
 
 @implementation AirShareTests
@@ -22,14 +25,41 @@
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
-    self.serialization = [[BLEMessageSerialization alloc] initWithDelegate:self];
-    self.serialization.callbackQueue = dispatch_queue_create("callback queue", 0);
+    self.receiver = [[BLESessionMessageReceiver alloc] initWithDelegate:self];
+    self.receiver.callbackQueue = dispatch_queue_create("callback queue", 0);
 }
 
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
-    self.serialization = nil;
+    self.receiver = nil;
+    self.expectation = nil;
+}
+
+- (void)testIdentityMessage {
+    self.expectation = [self expectationWithDescription:@"Identity Expectation"];
+    BLEKeyPair *keyPair = [BLEKeyPair keyPairWithType:BLEKeyTypeEd25519];
+    BLEPeer *peer = [[BLEPeer alloc] initWithPublicKey:keyPair.publicKey];
+    self.outgoingIdentityMessage = [[BLEIdentityMessage alloc] initWithPeer:peer];
+    [self sendDataAsChunks:self.outgoingIdentityMessage.serializedData chunkSize:20 toReceiver:self.receiver];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Error: %@", error);
+        }
+    }];
+}
+
+- (void) sendDataAsChunks:(NSData*)data chunkSize:(NSUInteger)chunkSize toReceiver:(BLESessionMessageReceiver*)receiver {
+    NSUInteger length = [data length];
+    NSUInteger offset = 0;
+    do {
+        NSUInteger thisChunkSize = length - offset > chunkSize ? chunkSize : length - offset;
+        NSData* chunk = [NSData dataWithBytesNoCopy:(char *)[data bytes] + offset
+                                             length:thisChunkSize
+                                       freeWhenDone:NO];
+        offset += thisChunkSize;
+        [receiver receiveData:chunk];
+    } while (offset < length);
 }
 
 - (void)testDataMessage {
@@ -39,20 +69,9 @@
         [testData appendBytes:&i length:sizeof(uint32_t)];
     }
     BLEDataMessage *dataMessage = [[BLEDataMessage alloc] initWithData:testData];
-    self.outgoingSessionMessage = dataMessage;
-    NSData *messageData = [dataMessage serialize];
-    NSUInteger length = [messageData length];
-    NSUInteger chunkSize = 155;
-    NSUInteger offset = 0;
-    do {
-        NSUInteger thisChunkSize = length - offset > chunkSize ? chunkSize : length - offset;
-        NSData* chunk = [NSData dataWithBytesNoCopy:(char *)[messageData bytes] + offset
-                                             length:thisChunkSize
-                                       freeWhenDone:NO];
-        offset += thisChunkSize;
-        [self.serialization receiveData:chunk];
-    } while (offset < length);
-    [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
+    self.outgoingDataMessage = dataMessage;
+    [self sendDataAsChunks:self.outgoingDataMessage.serializedData chunkSize:155 toReceiver:self.receiver];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Error: %@", error);
         }
@@ -61,38 +80,49 @@
 
 #pragma mark BLEMessageSerializationDelegate
 
-- (void) serialization:(BLEMessageSerialization*)serialization
-        headerComplete:(BLESessionMessage*)message {
+- (void) receiver:(BLESessionMessageReceiver*)receiver
+   headerComplete:(BLESessionMessage*)message {
     NSLog(@"headers complete: %@", message.headers);
-    if ([message isKindOfClass:[self.outgoingSessionMessage class]]) {
-        if ([message isKindOfClass:[BLEDataMessage class]]) {
-            BLEDataMessage *dataMessage = (BLEDataMessage*)message;
-            BOOL equal = [[dataMessage headers] isEqualToDictionary:[self.outgoingSessionMessage headers]];
-            XCTAssertTrue(equal, @"headers are different");
-            
-        }
+    if ([message isKindOfClass:[BLEDataMessage class]]) {
+        BLEDataMessage *dataMessage = (BLEDataMessage*)message;
+        BOOL equal = [[dataMessage headers] isEqualToDictionary:[self.outgoingDataMessage headers]];
+        XCTAssertTrue(equal, @"headers are different");
+    } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
+        BLEIdentityMessage *identityMessage = (BLEIdentityMessage*)message;
+        BOOL equal = [[identityMessage headers] isEqualToDictionary:[self.outgoingIdentityMessage headers]];
+        XCTAssertTrue(equal, @"headers are different");
     } else {
         XCTFail(@"Wrong class");
     }
 }
 
-- (void) serialization:(BLEMessageSerialization*)serialization
-               message:(BLESessionMessage*)message
-          incomingData:(NSData*)incomingData
-              progress:(float)progress {
+- (void) receiver:(BLESessionMessageReceiver*)receiver
+          message:(BLESessionMessage*)message
+     incomingData:(NSData*)incomingData
+         progress:(float)progress {
     NSLog(@"progress: %f", progress);
 }
 
-- (void) serialization:(BLEMessageSerialization*)serialization
-      transferComplete:(BLESessionMessage*)message {
+- (void) receiver:(BLESessionMessageReceiver*)receiver
+ transferComplete:(BLESessionMessage*)message {
     NSLog(@"complete");
     if ([message isKindOfClass:[BLEDataMessage class]]) {
         BLEDataMessage *dataMessage = (BLEDataMessage*)message;
-        BLEDataMessage *outgoingDataMessage = (BLEDataMessage*)self.outgoingSessionMessage;
+        BLEDataMessage *outgoingDataMessage = (BLEDataMessage*)self.outgoingDataMessage;
         NSData *incomingData = dataMessage.data;
         NSData *outgoingData = outgoingDataMessage.data;
         BOOL equal = [incomingData isEqualToData:outgoingData];
         XCTAssertTrue(equal, @"data is different");
+        if (equal) {
+            [self.expectation fulfill];
+        }
+    }
+    if ([message isKindOfClass:[BLEIdentityMessage class]]) {
+        BLEIdentityMessage *identityMessage = (BLEIdentityMessage*)message;
+        NSData *incomingPubKey = identityMessage.publicKey;
+        NSData *outgoingPubKey = self.outgoingIdentityMessage.publicKey;
+        BOOL equal = [incomingPubKey isEqualToData:outgoingPubKey];
+        XCTAssertTrue(equal, @"identity is different");
         if (equal) {
             [self.expectation fulfill];
         }

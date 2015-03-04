@@ -10,4 +10,11 @@
 
 @implementation BLEPeer
 
+- (instancetype) initWithPublicKey:(NSData*)publicKey {
+    if (self = [super init]) {
+        _publicKey = publicKey;
+    }
+    return self;
+}
+
 @end

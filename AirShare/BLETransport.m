@@ -242,6 +242,10 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
     [requests enumerateObjectsUsingBlock:^(CBATTRequest *request, NSUInteger idx, BOOL *stop) {
         NSData *data = request.value;
         NSLog(@"write %@", data);
+        NSString *identifier = request.central.identifier.UUIDString;
+        dispatch_async(self.delegateQueue, ^{
+            [self.delegate transport:self dataReceived:data fromIdentifier:identifier];
+        });
         [peripheral respondToRequest:request withResult:CBATTErrorSuccess];
     }];
 

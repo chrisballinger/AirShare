@@ -41,6 +41,9 @@
 /** Full packet (includes prefix, header & payload) */
 - (NSData*) serializedDataAtOffset:(NSUInteger)offset length:(NSUInteger)length;
 
+/** serializes full message (only works if payload fits in memory) */
+- (NSData*) serializedData;
+
 @end
 
 @interface BLESessionMessage (Deserialization)

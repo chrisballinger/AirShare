@@ -20,7 +20,7 @@
 @interface BLESession : NSObject <BLETransportDelegate>
 
 @property (nonatomic, strong, readonly) BLETransport *transport;
-@property (nonatomic, strong, readonly) BLEPeer *localPeer;
+@property (nonatomic, strong, readonly) BLELocalPeer *localPeer;
 @property (nonatomic, strong, readonly) BLEPeer *connectedPeer;
 
 @property (nonatomic, weak) id<BLESessionDelegate> delegate;

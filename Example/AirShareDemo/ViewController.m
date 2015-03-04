@@ -10,11 +10,13 @@
 #import "BLEPeerBrowserViewController.h"
 #import "BLESessionViewController.h"
 #import "BLESessionManager.h"
+#import "BLECrypto.h"
+#import "BLELocalPeer.h"
 
 static NSString * const CellIdentifier = @"CellIdentifier";
 
 @interface ViewController ()
-@property (nonatomic, strong) BLEPeer *localPeer;
+@property (nonatomic, strong) BLELocalPeer *localPeer;
 @property (nonatomic, strong) BLESessionManager *sessionManager;
 @end
 
@@ -26,12 +28,10 @@ static NSString * const CellIdentifier = @"CellIdentifier";
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-
-    
-    self.localPeer = [[BLEPeer alloc] init];
+    BLEKeyPair *keyPair = [BLEKeyPair keyPairWithType:BLEKeyTypeEd25519];
+    BLELocalPeer *localPeer = [[BLELocalPeer alloc] initWithPublicKey:keyPair.publicKey privateKey:keyPair.privateKey];
+    self.localPeer = localPeer;
     self.sessionManager = [[BLESessionManager alloc] initWithLocalPeer:self.localPeer delegate:nil];
-    
-    
 }
 
 - (IBAction) shareButtonPressed:(id)sender {

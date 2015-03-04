@@ -12,4 +12,6 @@
 
 @property (nonatomic, strong, readonly) NSData *privateKey;
 
+- (instancetype) initWithPublicKey:(NSData *)publicKey privateKey:(NSData*)privateKey;
+
 @end
