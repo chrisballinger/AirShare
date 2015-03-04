@@ -6,8 +6,6 @@
 //
 //
 
-#import "MTLModel.h"
-
 @interface BLEPeer : NSObject
 
 /** Serves as unique identifier */

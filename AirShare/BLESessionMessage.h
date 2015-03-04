@@ -8,32 +8,48 @@
 
 #import <Foundation/Foundation.h>
 
+/** abstract class */
 @interface BLESessionMessage : NSObject
 
 // Prefix
-@property (nonatomic, readonly) uint8_t version;
-@property (nonatomic, readonly) uint32_t headerLength;
+@property (nonatomic) uint8_t version;
+@property (nonatomic) uint16_t headerLength;
 
 // Derived from values in header
-@property (nonatomic, strong, readonly) NSString *identifer;
-@property (nonatomic, readonly) NSUInteger payloadLength;
-@property (nonatomic, strong, readonly) NSString *type;
+@property (nonatomic, strong) NSString *identifer;
+@property (nonatomic) NSUInteger payloadLength;
+@property (nonatomic, strong) NSString *type;
+
+/** outgoing */
+- (instancetype) initWithIdentifier:(NSString*)identifier;
+
+/** incoming */
+- (instancetype) initWithVersion:(uint8_t)version headers:(NSDictionary*)headers;
+
++ (NSString*) type;
+
+@end
+
+@interface BLESessionMessage (Serialization)
 
 - (NSMutableDictionary*) headers;
-- (void) parseHeaders:(NSDictionary *)headers;
-
-- (NSData*) payloadDataAtOffset:(NSUInteger)offset length:(NSUInteger)length;
-
-- (void) parsePrefixData:(NSData*)prefixData;
 - (NSData*) serializePrefixData;
 - (NSData*) serializeHeaderData;
 
-- (instancetype) initWithIdentifier:(NSString*)identifier;
+/** Just payload */
+- (NSData*) payloadDataAtOffset:(NSUInteger)offset length:(NSUInteger)length;
+/** Full packet (includes prefix, header & payload) */
+- (NSData*) serializedDataAtOffset:(NSUInteger)offset length:(NSUInteger)length;
 
-- (instancetype) initWithPrefixData:(NSData*)prefixData;
+@end
+
+@interface BLESessionMessage (Deserialization)
+
+- (void) parseHeaders:(NSDictionary *)headers;
+- (void) parsePrefixData:(NSData*)prefixData;
 
 + (uint8_t) versionFromPrefixData:(NSData*)prefixData;
-+ (uint32_t) headerLengthFromPrefixData:(NSData*)prefixData;
++ (uint16_t) headerLengthFromPrefixData:(NSData*)prefixData;
 + (NSDictionary*) headersFromData:(NSData*)data version:(uint8_t)version error:(NSError**)error;
 
 @end

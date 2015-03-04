@@ -2,13 +2,11 @@ PODS:
   - AirShare/AirShare (0.1.0):
     - CocoaLumberjack (~> 1.9)
     - libsodium
-    - Mantle (~> 1.5)
     - PureLayout (~> 2.0)
   - AirShare/UIKit (0.1.0):
     - AirShare/AirShare
     - CocoaLumberjack (~> 1.9)
     - libsodium
-    - Mantle (~> 1.5)
     - PureLayout (~> 2.0)
   - CocoaLumberjack (1.9.2):
     - CocoaLumberjack/Extensions (= 1.9.2)
@@ -16,9 +14,6 @@ PODS:
   - CocoaLumberjack/Extensions (1.9.2):
     - CocoaLumberjack/Core
   - libsodium (1.0.1)
-  - Mantle (1.5.4):
-    - Mantle/extobjc (= 1.5.4)
-  - Mantle/extobjc (1.5.4)
   - PureLayout (2.0.5)
 
 DEPENDENCIES:
@@ -29,10 +24,9 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  AirShare: abc5545cc082562790df5196dc0feac0dba35cf9
+  AirShare: 3b743c0a08c1c402a240f3e496560ddfed66c5c9
   CocoaLumberjack: 205769c032b5fef85b92472046bcc8b7e7c8a817
   libsodium: ac34cc59b942350fb1377380cfb31f05c3d6170e
-  Mantle: d5fbaf30fbc58031223af13812c060e15934a1fe
   PureLayout: 63a3257320223e8edddcd3afb407445f85a6bf74
 
 COCOAPODS: 0.35.0

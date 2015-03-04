@@ -8,11 +8,16 @@
 
 #import "BLESessionMessage.h"
 
-const NSUInteger kBLESessionMessagePrefixLength = 5;
+const NSUInteger kBLESessionMessagePrefixLength = 3;
 
 NSString * const kBLESessionMessageHeaderTypeKey = @"type";
 NSString * const kBLESessionMessageHeaderPayloadLengthKey = @"length";
 NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
+
+@interface BLESessionMessage ()
+@property (nonatomic, strong) NSData *cachedPrefixData;
+@property (nonatomic, strong) NSData *cachedHeaderData;
+@end
 
 @implementation BLESessionMessage
 
@@ -27,12 +32,15 @@ NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
     if (self = [super init]) {
         _identifer = identifier;
         _version = 1;
+        _type = [[self class] type];
     }
     return self;
 }
 
-- (instancetype) initWithPrefixData:(NSData*)prefixData {
+- (instancetype) initWithVersion:(uint8_t)version headers:(NSDictionary*)headers {
     if (self = [super init]) {
+        _version = version;
+        [self parseHeaders:headers];
     }
     return self;
 }
@@ -43,13 +51,17 @@ NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
 }
 
 - (NSData*) serializePrefixData {
-    NSMutableData *prefixData = [NSMutableData dataWithLength:kBLESessionMessagePrefixLength];
-    [prefixData appendBytes:&_version length:1];
-    uint32_t headerLength = NSSwapHostIntToLittle(_headerLength);
-    [prefixData appendBytes:&headerLength length:4];
-    return prefixData;
+    if (!self.cachedPrefixData) {
+        NSData *headerData = [self serializeHeaderData];
+        _headerLength = headerData.length;
+        NSMutableData *prefixData = [[NSMutableData alloc] initWithCapacity:kBLESessionMessagePrefixLength];
+        [prefixData appendBytes:&_version length:1];
+        uint16_t headerLength = NSSwapHostShortToLittle(_headerLength);
+        [prefixData appendBytes:&headerLength length:2];
+        self.cachedPrefixData = prefixData;
+    }
+    return self.cachedPrefixData;
 }
-
 
 + (uint8_t) versionFromPrefixData:(NSData*)prefixData {
     NSAssert(prefixData.length == kBLESessionMessagePrefixLength, @"Bad prefix");
@@ -61,13 +73,13 @@ NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
     return version;
 }
 
-+ (uint32_t) headerLengthFromPrefixData:(NSData*)prefixData {
++ (uint16_t) headerLengthFromPrefixData:(NSData*)prefixData {
     NSAssert(prefixData.length == kBLESessionMessagePrefixLength, @"Bad prefix");
     if (prefixData.length != kBLESessionMessagePrefixLength) {
         return 0;
     }
-    uint32_t headerLength = 0;
-    [prefixData getBytes:&headerLength range:NSMakeRange(1, 4)];
+    uint16_t headerLength = 0;
+    [prefixData getBytes:&headerLength range:NSMakeRange(1, 2)];
     headerLength = NSSwapLittleIntToHost(headerLength);
     return headerLength;
 }
@@ -87,15 +99,23 @@ NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
 }
 
 - (NSData*) serializeHeaderData {
-    NSDictionary *headers = [self headers];
-    NSError *error = nil;
-    NSData *data = [NSJSONSerialization dataWithJSONObject:headers options:0 error:&error];
-    return data;
+    if (!self.cachedHeaderData) {
+        NSDictionary *headers = [self headers];
+        NSError *error = nil;
+        NSData *data = [NSJSONSerialization dataWithJSONObject:headers options:0 error:&error];
+        self.cachedHeaderData = data;
+    }
+    return self.cachedHeaderData;
 }
 
 + (NSDictionary*) headersFromData:(NSData*)data version:(uint8_t)version error:(NSError**)error {
     NSDictionary *headers = [NSJSONSerialization JSONObjectWithData:data options:0 error:error];
     return headers;
+}
+
++ (NSString*) type {
+    NSAssert(NO, @"Must be implemented in concrete subclass");
+    return nil;
 }
 
 @end
