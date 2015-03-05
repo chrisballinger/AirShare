@@ -41,7 +41,15 @@ typedef NS_ENUM(NSInteger, BLEConnectionStatus) {
 
 @end
 
-@protocol BLETransport <NSObject>
+@interface BLETransport : NSObject
+
+@property (nonatomic, strong, readonly) NSString *serviceName;
+
+@property (nonatomic, weak) id<BLETransportDelegate> delegate;
+@property (nonatomic, strong) dispatch_queue_t delegateQueue;
+
+- (instancetype) initWithServiceName:(NSString*)serviceName
+                            delegate:(id<BLETransportDelegate>)delegate;
 
 - (BOOL) sendData:(NSData*)data
     toIdentifiers:(NSArray*)identifiers
@@ -50,15 +58,6 @@ typedef NS_ENUM(NSInteger, BLEConnectionStatus) {
 
 - (void) advertise;
 - (void) scan;
-
-- (instancetype) initWithDelegate:(id<BLETransportDelegate>)delegate;
-
-@property (nonatomic, weak) id<BLETransportDelegate> delegate;
-@property (nonatomic, strong) dispatch_queue_t delegateQueue;
-
-@end
-
-@interface BLETransport : NSObject <BLETransport>
-
+- (void) stop;
 
 @end

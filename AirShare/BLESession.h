@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BLEPeer.h"
+#import "BLELocalPeer.h"
 #import "BLETransfer.h"
 #import "BLETransport.h"
 

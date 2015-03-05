@@ -9,6 +9,7 @@
 #import "BLESessionManager.h"
 #import "BLESessionMessageReceiver.h"
 #import "BLEIdentityMessage.h"
+#import "BLEBluetoothTransport.h"
 #import "BLEDataMessage.h"
 
 @interface BLESessionManager() <BLESessionMessageReceiverDelegate>
@@ -37,7 +38,7 @@
 }
 
 - (void) registerTransports {
-    BLETransport *transport = [[BLETransport alloc] initWithDelegate:self];
+    BLEBluetoothTransport *transport = [[BLEBluetoothTransport alloc] initWithServiceName:@"AirShare" delegate:self];
     [self.transports addObject:transport];
 }
 
@@ -87,14 +88,14 @@
           dataSent:(NSData*)data
       toIdentifier:(NSString*)identifier
              error:(NSError*)error {
-    NSLog(@"dataSent:toIdentifier %@: %@", identifier, data);
+    NSLog(@"dataSent:toIdentifier %@: %@ %@", identifier, data, error);
 }
 
 - (void) transport:(BLETransport*)transport
  identifierUpdated:(NSString*)identifier
   connectionStatus:(BLEConnectionStatus)connectionStatus
          extraInfo:(NSDictionary*)extraInfo {
-    NSLog(@"identifier: %@ %d %@", identifier, (int)connectionStatus, extraInfo);
+    NSLog(@"identifierUpdated: %@ %d %@", identifier, (int)connectionStatus, extraInfo);
     BLEPeer *peer = [self.identifiersToPeers objectForKey:identifier];
     if (!peer) {
         BOOL identifierUndergoingPeerDiscovery = [self.identifiersUndergoingPeerDiscovery containsObject:identifier];
