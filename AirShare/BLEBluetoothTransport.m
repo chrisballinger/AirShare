@@ -45,8 +45,11 @@
         BOOL seenOnPeripheral = [self.peripheral hasSeenIdentifier:identifier];
         if (seenOnCentral) {
             [self.central sendData:data toIdentifier:identifier error:error];
-        } else if (seenOnPeripheral) {
+        }
+        if (seenOnPeripheral) {
             [self.peripheral sendData:data toIdentifier:identifier error:error];
+        } else {
+            NSLog(@"identifier not seen: %@", identifier);
         }
     }];
     return NO;

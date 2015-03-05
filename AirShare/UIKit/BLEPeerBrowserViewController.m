@@ -12,7 +12,7 @@
 #import "PureLayout.h"
 
 @interface BLEPeerBrowserViewController () <UITableViewDataSource, UITableViewDelegate>
-@property (nonatomic, strong) NSMutableArray *peers;
+@property (nonatomic, strong) NSMutableOrderedSet *peers;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic) BOOL hasUpdatedConstraints;
 @end
@@ -23,6 +23,7 @@
     if (self = [super init]) {
         _sessionManager = sessionManager;
         self.sessionManager.delegate = self;
+        self.sessionManager.delegateQueue = dispatch_get_main_queue();
     }
     return self;
 }
@@ -47,7 +48,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.peers = [NSMutableArray array];
+    self.peers = [NSMutableOrderedSet orderedSet];
     [self setupTableView];
     [self setupDoneButton];
     [self setupBroadcastButton];
@@ -56,6 +57,8 @@
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    NSArray *peers = [self.sessionManager discoveredPeers];
+    [self.peers addObjectsFromArray:peers];
     [self.sessionManager scanForPeers];
 }
 
@@ -132,7 +135,13 @@ errorEstablishingSession:(NSError*)error {
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     BLEPeerTableViewCell *peerCell = [tableView dequeueReusableCellWithIdentifier:[BLEPeerTableViewCell cellIdentifier] forIndexPath:indexPath];
+    BLEPeer *peer = [self.peers objectAtIndex:indexPath.row];
+    [peerCell setPeer:peer];
     return peerCell;
+}
+
+- (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 45;
 }
 
 @end

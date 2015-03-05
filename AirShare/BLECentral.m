@@ -38,9 +38,24 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
             error:(NSError**)error {
     [self.dataQueue queueData:data forIdentifier:identifier];
     CBPeripheral *periperal = [self.connectedPeripherals objectForKey:identifier];
-    CBCharacteristic *characteristic = [self dataCharacteristicForPeripheral:periperal];
-    [periperal writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+    BLEConnectionStatus status = [self connectionStatusForPeripheral:periperal];
+    if (status == BLEConnectionStatusConnected) {
+        [self sendQueuedDataForConnectedPeripheral:periperal];
+    } else if (status == BLEConnectionStatusDisconnected) {
+        if (periperal) {
+            [self.centralManager connectPeripheral:periperal options:nil];
+        }
+    }
     return YES;
+}
+
+- (void) sendQueuedDataForConnectedPeripheral:(CBPeripheral*)peripheral {
+    NSData *data = [self.dataQueue peekDataForIdentifier:peripheral.identifier.UUIDString];
+    if (!data) {
+        return;
+    }
+    CBCharacteristic *characteristic = [self dataCharacteristicForPeripheral:peripheral];
+    [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
 }
 
 - (BOOL) hasSeenIdentifier:(NSString*)identifier {
@@ -152,10 +167,20 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
     dispatch_async(self.delegateQueue, ^{
         [self.delegate device:self dataSent:data toIdentifier:identifier error:error];
     });
+    [self sendQueuedDataForConnectedPeripheral:peripheral];
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    NSLog(@"didUpdateValueForCharacteristic %@ %@", characteristic.value, error);
+    if (error) {
+        NSLog(@"didUpdateValueForCharacteristic error %@", error);
+        return;
+    }
+    NSString *identifier = peripheral.identifier.UUIDString;
+    NSData *data = characteristic.value;
+    dispatch_async(self.delegateQueue, ^{
+        [self.delegate device:self dataReceived:data fromIdentifier:identifier];
+    });
+    NSLog(@"didUpdateValueForCharacteristic %@", characteristic.value);
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
@@ -165,11 +190,17 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
         dispatch_async(self.delegateQueue, ^{
             [self.delegate device:self identifierUpdated:peripheral.identifier.UUIDString status:BLEConnectionStatusConnected extraInfo:nil];
         });
+        
     }
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
-    NSLog(@"didDiscoverCharacteristicsForService: %@", service.characteristics);
+    if (error) {
+        NSLog(@"didDiscoverCharacteristicsForService error %@" ,error);
+        return;
+    } else {
+        NSLog(@"didDiscoverCharacteristicsForService: %@", service.characteristics);
+    }
     NSArray *characteristics = service.characteristics;
     NSUInteger characteristicIndex = [characteristics indexOfObjectPassingTest:^BOOL(CBCharacteristic *characteristic, NSUInteger idx, BOOL *stop) {
         if ([characteristic.UUID isEqual:self.characteristicUUID]) {
@@ -183,6 +214,10 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
         return;
     }
     CBCharacteristic *characteristic = [characteristics objectAtIndex:characteristicIndex];
+    if (!characteristic) {
+        NSLog(@"Characteristic not found");
+        return;
+    }
     [self.peripheralDataCharacteristics setObject:characteristic forKey:peripheral.identifier.UUIDString];
     [peripheral setNotifyValue:YES forCharacteristic:characteristic];
 }

@@ -38,6 +38,8 @@ errorEstablishingSession:(NSError*)error;
 
 - (void) scanForPeers;
 
+- (NSArray*) discoveredPeers;
+
 /** Start synchronous session with peer, default 10s timeout */
 - (void) startSessionWithPeer:(BLEPeer*)peer;
 

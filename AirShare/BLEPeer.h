@@ -14,10 +14,10 @@
 @property (nonatomic, strong) NSString *alias;
 
 /** May be nil if transport doesn't support signal strength */
-@property (nonatomic, strong, readonly) NSNumber *RSSI;
+@property (nonatomic, strong) NSNumber *RSSI;
 
 /** Last time peer has been seen */
-@property (nonatomic, strong, readonly) NSDate *lastSeenDate;
+@property (nonatomic, strong) NSDate *lastSeenDate;
 
 - (instancetype) initWithPublicKey:(NSData*)publicKey;
 

@@ -46,6 +46,14 @@
     return [self.transports anyObject];
 }
 
+- (void) setPeer:(BLEPeer*)peer forIndentifier:(NSString*)identifier {
+    [self.identifiersToPeers setObject:peer forKey:identifier];
+}
+
+- (BLEPeer*)peerForIdentifier:(NSString*)identifier {
+    return [self.identifiersToPeers objectForKey:identifier];
+}
+
 - (void) advertiseLocalPeer {
     [self.transports enumerateObjectsUsingBlock:^(BLETransport *transport, BOOL *stop) {
         [transport advertise];
@@ -96,7 +104,7 @@
   connectionStatus:(BLEConnectionStatus)connectionStatus
          extraInfo:(NSDictionary*)extraInfo {
     NSLog(@"identifierUpdated: %@ %d %@", identifier, (int)connectionStatus, extraInfo);
-    BLEPeer *peer = [self.identifiersToPeers objectForKey:identifier];
+    BLEPeer *peer = [self peerForIdentifier:identifier];
     if (!peer) {
         BOOL identifierUndergoingPeerDiscovery = [self.identifiersUndergoingPeerDiscovery containsObject:identifier];
         if (!identifierUndergoingPeerDiscovery) {
@@ -104,9 +112,16 @@
                 [self.identifiersUndergoingPeerDiscovery addObject:identifier];
                 NSError *error = nil;
                 BLEIdentityMessage *identityMessage = [[BLEIdentityMessage alloc] initWithPeer:self.localPeer];
-                BOOL success = [transport sendData:identityMessage.serializedData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
+                [transport sendData:identityMessage.serializedData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
             }
         }
+    } else {
+        NSNumber *RSSI = [extraInfo objectForKey:@"RSSI"];
+        peer.RSSI = RSSI;
+        peer.lastSeenDate = [NSDate date];
+        dispatch_async(self.delegateQueue, ^{
+            [self.delegate sessionManager:self peer:peer statusUpdated:connectionStatus];
+        });
     }
 }
 
@@ -138,9 +153,27 @@
     } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
         BLEIdentityMessage *identityMessage = (BLEIdentityMessage*)message;
         NSString *identifier = receiver.context;
-        BLEPeer *peer = [[BLEPeer alloc] initWithPublicKey:identityMessage.publicKey];
-        NSLog(@"peer discovered for identifier: %@ %@", peer, identifier);
+        [self.identifiersUndergoingPeerDiscovery removeObject:identifier];
+        BLEPeer *peer = [self peerForIdentifier:identifier];
+        if (!peer) {
+            peer = [[BLEPeer alloc] initWithPublicKey:identityMessage.publicKey];
+            [self setPeer:peer forIndentifier:identifier];
+            BLEIdentityMessage *identityMessage = [[BLEIdentityMessage alloc] initWithPeer:self.localPeer];
+            BLETransport *transport = [self preferredTransportForPeer:peer];
+            NSError *error = nil;
+            NSData *data = identityMessage.serializedData;
+            [transport sendData:data toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
+            NSLog(@"peer discovered for identifier: %@ %@", peer, identifier);
+        }
+        peer.lastSeenDate = [NSDate date];
+        dispatch_async(self.delegateQueue, ^{
+            [self.delegate sessionManager:self peer:peer statusUpdated:BLEConnectionStatusConnected];
+        });
     }
+}
+
+- (NSArray *)discoveredPeers {
+    return [self.identifiersToPeers allValues];
 }
 
 @end
