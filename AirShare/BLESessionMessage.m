@@ -50,9 +50,14 @@ NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
     _headerLength = [BLESessionMessage headerLengthFromPrefixData:prefixData];
 }
 
-- (NSData*) serializePrefixData {
+- (void) clearSerializationCache {
+    self.cachedHeaderData = nil;
+    self.cachedPrefixData = nil;
+}
+
+- (NSData*) serializedPrefixData {
     if (!self.cachedPrefixData) {
-        NSData *headerData = [self serializeHeaderData];
+        NSData *headerData = [self serializedHeaderData];
         _headerLength = headerData.length;
         NSMutableData *prefixData = [[NSMutableData alloc] initWithCapacity:kBLESessionMessagePrefixLength];
         [prefixData appendBytes:&_version length:1];
@@ -98,7 +103,7 @@ NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
     return headers;
 }
 
-- (NSData*) serializeHeaderData {
+- (NSData*) serializedHeaderData {
     if (!self.cachedHeaderData) {
         NSDictionary *headers = [self headers];
         NSError *error = nil;
@@ -111,6 +116,18 @@ NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
 + (NSDictionary*) headersFromData:(NSData*)data version:(uint8_t)version error:(NSError**)error {
     NSDictionary *headers = [NSJSONSerialization JSONObjectWithData:data options:0 error:error];
     return headers;
+}
+
+- (NSData*) serializedPrefixAndHeaderData {
+    NSData *prefix = [self serializedPrefixData];
+    NSData *header = [self serializedHeaderData];
+    NSMutableData *data = [NSMutableData dataWithData:prefix];
+    [data appendData:header];
+    return data;
+}
+
+- (NSData*) serializedData {
+    return [self serializedPrefixAndHeaderData];
 }
 
 + (NSString*) type {

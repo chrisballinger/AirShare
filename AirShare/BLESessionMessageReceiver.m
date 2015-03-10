@@ -71,7 +71,7 @@
             messageClass = [BLEIdentityMessage class];
         } else if ([type isEqualToString:[BLEDataMessage type]]) {
             messageClass = [BLEDataMessage class];
-        } else if ([type isEqualToString:[BLEFileTransferMessage type]]) {
+        } else if ([type containsString:[BLEFileTransferMessage type]]) {
             messageClass = [BLEFileTransferMessage class];
         }
         if (messageClass) {
@@ -87,6 +87,14 @@
             dispatch_async(self.callbackQueue, ^{
                 [self.delegate receiver:self transferComplete:sessionMessage];
             });
+        }
+        if ([sessionMessage isKindOfClass:[BLEFileTransferMessage class]]) {
+            BLEFileTransferMessage *transferMessage = (BLEFileTransferMessage*)sessionMessage;
+            if (transferMessage.transferType == BLEFileTransferMessageTypeAccept || transferMessage.transferType == BLEFileTransferMessageTypeOffer) {
+                dispatch_async(self.callbackQueue, ^{
+                    [self.delegate receiver:self transferComplete:sessionMessage];
+                });
+            }
         }
     }
     if (self.sessionMessage) {

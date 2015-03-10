@@ -33,8 +33,10 @@
 @interface BLESessionMessage (Serialization)
 
 - (NSMutableDictionary*) headers;
-- (NSData*) serializePrefixData;
-- (NSData*) serializeHeaderData;
+- (NSData*) serializedPrefixData;
+- (NSData*) serializedHeaderData;
+- (NSData*) serializedPrefixAndHeaderData;
+- (void) clearSerializationCache;
 
 /** Just payload */
 - (NSData*) payloadDataAtOffset:(NSUInteger)offset length:(NSUInteger)length;

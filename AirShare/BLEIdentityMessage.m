@@ -27,9 +27,9 @@ NSString * const kBLEIdentityMessageHeaderAliasKey = @"alias";
 
 - (NSData*) serializedData {
     if (!self.serializedMessage) {
-        NSData *prefixData = [self serializePrefixData];
+        NSData *prefixData = [self serializedPrefixData];
         NSParameterAssert(prefixData.length > 0);
-        NSData *headerData = [self serializeHeaderData];
+        NSData *headerData = [self serializedHeaderData];
         NSParameterAssert(headerData.length > 0);
         NSUInteger totalLength = prefixData.length + headerData.length;
         self.serializedMessage = [[NSMutableData alloc] initWithCapacity:totalLength];

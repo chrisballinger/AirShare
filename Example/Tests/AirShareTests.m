@@ -11,6 +11,7 @@
 #import "BLEDataMessage.h"
 #import "BLESessionMessageReceiver.h"
 #import "BLEIdentityMessage.h"
+#import "BLEFileTransferMessage.h"
 #import "BLECrypto.h"
 
 @interface AirShareTests : XCTestCase <BLESessionMessageReceiverDelegate>
@@ -18,15 +19,20 @@
 @property (nonatomic, strong) XCTestExpectation *expectation;
 @property (nonatomic, strong) BLEDataMessage *outgoingDataMessage;
 @property (nonatomic, strong) BLEIdentityMessage *outgoingIdentityMessage;
+@property (nonatomic, strong) BLEFileTransferMessage *fileTransferMessage;
 @end
 
 @implementation AirShareTests
 
+- (void) setupReceiver {
+    self.receiver = [[BLESessionMessageReceiver alloc] initWithDelegate:self];
+    self.receiver.callbackQueue = dispatch_queue_create("callback queue", 0);
+}
+
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
-    self.receiver = [[BLESessionMessageReceiver alloc] initWithDelegate:self];
-    self.receiver.callbackQueue = dispatch_queue_create("callback queue", 0);
+    [self setupReceiver];
 }
 
 - (void)tearDown {
@@ -49,6 +55,50 @@
     }];
 }
 
+- (void)testDataMessage {
+    self.expectation = [self expectationWithDescription:@"Serialization Expectation"];
+    NSData *testData = [self generateTestDataOfLength:16000];
+    BLEDataMessage *dataMessage = [[BLEDataMessage alloc] initWithData:testData];
+    self.outgoingDataMessage = dataMessage;
+    [self sendDataAsChunks:self.outgoingDataMessage.serializedData chunkSize:155 toReceiver:self.receiver];
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Error: %@", error);
+        }
+    }];
+}
+
+- (void) testFileTransferMessage {
+    self.expectation = [self expectationWithDescription:@"File Expectation"];
+    NSData *testData = [self generateTestDataOfLength:16000];
+    NSString *tempDirectory = NSTemporaryDirectory();
+    XCTAssertNotNil(tempDirectory);
+    XCTAssertTrue([[NSFileManager defaultManager] isWritableFileAtPath:tempDirectory]);
+    NSString *path = [tempDirectory stringByAppendingPathComponent:@"test.file"];
+    BOOL success = [testData writeToFile:path atomically:YES];
+    XCTAssert(success, @"Error writing test data");
+    NSURL *fileURL = [NSURL fileURLWithPath:path];
+    self.fileTransferMessage = [[BLEFileTransferMessage alloc] initWithFileURL:fileURL transferType:BLEFileTransferMessageTypeOffer];
+    XCTAssert(self.fileTransferMessage.transferType == BLEFileTransferMessageTypeOffer);
+    NSDictionary *headers = self.fileTransferMessage.headers;
+    NSString *type = [headers objectForKey:kBLESessionMessageHeaderTypeKey];
+    XCTAssertEqualObjects(type, kBLEFileTransferMessageHeaderTypeOffer);
+    NSData *serializedOffer = self.fileTransferMessage.serializedData;
+    [self.receiver receiveData:serializedOffer];
+    
+}
+
+- (NSData*) generateTestDataOfLength:(NSUInteger)length {
+    NSMutableData *data = [NSMutableData dataWithCapacity:length];
+    uint8_t x = 0;
+    for (NSUInteger i = 0; i < length; i++) {
+        x++;
+        [data appendBytes:&x length:1];
+    }
+    return data;
+}
+
+
 - (void) sendDataAsChunks:(NSData*)data chunkSize:(NSUInteger)chunkSize toReceiver:(BLESessionMessageReceiver*)receiver {
     NSUInteger length = [data length];
     NSUInteger offset = 0;
@@ -62,21 +112,7 @@
     } while (offset < length);
 }
 
-- (void)testDataMessage {
-    self.expectation = [self expectationWithDescription:@"Serialization Expectation"];
-    NSMutableData *testData = [NSMutableData data];
-    for (uint32_t i = 0; i < 4096; i++) {
-        [testData appendBytes:&i length:sizeof(uint32_t)];
-    }
-    BLEDataMessage *dataMessage = [[BLEDataMessage alloc] initWithData:testData];
-    self.outgoingDataMessage = dataMessage;
-    [self sendDataAsChunks:self.outgoingDataMessage.serializedData chunkSize:155 toReceiver:self.receiver];
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-        }
-    }];
-}
+
 
 #pragma mark BLEMessageSerializationDelegate
 
@@ -90,6 +126,10 @@
     } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
         BLEIdentityMessage *identityMessage = (BLEIdentityMessage*)message;
         BOOL equal = [[identityMessage headers] isEqualToDictionary:[self.outgoingIdentityMessage headers]];
+        XCTAssertTrue(equal, @"headers are different");
+    } else if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
+        BLEFileTransferMessage *transferMessage = (BLEFileTransferMessage*)message;
+        BOOL equal = [[transferMessage headers] isEqualToDictionary:[self.fileTransferMessage headers]];
         XCTAssertTrue(equal, @"headers are different");
     } else {
         XCTFail(@"Wrong class");
@@ -116,8 +156,7 @@
         if (equal) {
             [self.expectation fulfill];
         }
-    }
-    if ([message isKindOfClass:[BLEIdentityMessage class]]) {
+    } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
         BLEIdentityMessage *identityMessage = (BLEIdentityMessage*)message;
         NSData *incomingPubKey = identityMessage.publicKey;
         NSData *outgoingPubKey = self.outgoingIdentityMessage.publicKey;
@@ -126,6 +165,24 @@
         if (equal) {
             [self.expectation fulfill];
         }
+    } else if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
+        BLEFileTransferMessage *transferMessage = (BLEFileTransferMessage*)message;
+        if (transferMessage.transferType == BLEFileTransferMessageTypeOffer) {
+            [self setupReceiver];
+            transferMessage.transferType = BLEFileTransferMessageTypeAccept;
+            NSData *serializedData = transferMessage.serializedData;
+            [self.receiver receiveData:serializedData];
+        } else if (transferMessage.transferType == BLEFileTransferMessageTypeAccept) {
+            [self setupReceiver];
+            // send file
+            self.fileTransferMessage.transferType = BLEFileTransferMessageTypeTransfer;
+            NSData *header = [self.fileTransferMessage serializedPrefixAndHeaderData];
+            [self.receiver receiveData:header];
+        } else if (transferMessage.transferType == BLEFileTransferMessageTypeTransfer) {
+            [self.expectation fulfill];
+        }
+        NSLog(@"transfer message received");
+        
     }
 }
 
