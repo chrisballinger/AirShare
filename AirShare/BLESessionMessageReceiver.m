@@ -21,6 +21,10 @@
 
 /** Used for Data Message */
 @property (nonatomic, strong) NSMutableData *incomingDataMessagePayload;
+
+// File handling
+@property (nonatomic, strong) NSFileHandle *incomingFileMessagePayload;
+@property (nonatomic) NSUInteger receivedFileMessagePayloadBytes;
 @end
 
 @implementation BLESessionMessageReceiver
@@ -117,6 +121,36 @@
                         [self.delegate receiver:self transferComplete:dataMessage];
                     });
                 }
+            }
+        } else if ([self.sessionMessage isKindOfClass:[BLEFileTransferMessage class]]) {
+            if (data.length == 0) {
+                return;
+            }
+            BLEFileTransferMessage *fileMessage = (BLEFileTransferMessage*)self.sessionMessage;
+            if (!self.incomingFileMessagePayload) {
+                // we should choose a better sandbox for receiving files
+                NSString *tempDir = NSTemporaryDirectory();
+                NSString *directory = [tempDir stringByAppendingPathComponent:fileMessage.identifer];
+                NSError *error = nil;
+                [[NSFileManager defaultManager] createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error];
+                NSString *filePath = [directory stringByAppendingPathComponent:fileMessage.fileName];
+                [[NSFileManager defaultManager] createFileAtPath:filePath contents:nil attributes:nil];
+                NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+                fileMessage.fileURL = fileURL;
+                self.incomingFileMessagePayload = [NSFileHandle fileHandleForWritingAtPath:filePath];
+            }
+            [self.incomingFileMessagePayload writeData:data];
+            _receivedFileMessagePayloadBytes += data.length;
+            if (fileMessage.payloadLength > self.receivedFileMessagePayloadBytes) {
+                float progress = (float)self.receivedFileMessagePayloadBytes / (float)fileMessage.payloadLength;
+                dispatch_async(self.callbackQueue, ^{
+                    [self.delegate receiver:self message:fileMessage incomingData:data progress:progress];
+                });
+            } else if (fileMessage.payloadLength == self.receivedFileMessagePayloadBytes) {
+                [self.incomingFileMessagePayload closeFile];
+                dispatch_async(self.callbackQueue, ^{
+                    [self.delegate receiver:self transferComplete:fileMessage];
+                });
             }
         }
     }

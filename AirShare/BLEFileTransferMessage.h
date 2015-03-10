@@ -17,7 +17,7 @@ typedef NS_ENUM (NSInteger ,
 
 @interface BLEFileTransferMessage : BLESessionMessage
 
-@property (nonatomic, strong, readonly) NSURL *fileURL;
+@property (nonatomic, strong) NSURL *fileURL;
 @property (nonatomic) BLEFileTransferMessageType transferType;
 @property (nonatomic, readonly) NSUInteger fileLength;
 @property (nonatomic, strong, readonly) NSString *fileName;
