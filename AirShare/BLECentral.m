@@ -224,6 +224,9 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
 
 - (void) peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
     NSLog(@"didDiscoverServices: %@", peripheral.services);
+    if (peripheral.services.count == 0) {
+        return;
+    }
     NSUInteger serviceIndex = [peripheral.services indexOfObjectPassingTest:^BOOL(CBService *service, NSUInteger idx, BOOL *stop) {
         if ([service.UUID isEqual:self.serviceUUID]) {
             *stop = YES;

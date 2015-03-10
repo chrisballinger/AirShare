@@ -12,6 +12,7 @@
 #import "BLESessionManager.h"
 #import "BLECrypto.h"
 #import "BLELocalPeer.h"
+#import "BLEFileTransferMessage.h"
 
 static NSString * const CellIdentifier = @"CellIdentifier";
 
@@ -36,21 +37,13 @@ static NSString * const CellIdentifier = @"CellIdentifier";
 
 - (IBAction) shareButtonPressed:(id)sender {
     NSURL *fileURL = nil;
-    BLETransfer *transfer = [BLETransfer transferWithFileURL:fileURL];
+    BLEFileTransferMessage *transfer = [[BLEFileTransferMessage alloc] initWithFileURL:fileURL transferType:BLEFileTransferMessageTypeOffer];
     BLESessionViewController *sessionView = [[BLESessionViewController alloc] initWithOutgoingTransfer:transfer sessionManager:self.sessionManager];
-    sessionView.transferCompletionBlock = ^void(BLETransfer *transfer, NSError *error) {
-        //outgoing transfer finished
-        
-    };
     [self presentViewController:sessionView animated:YES completion:nil];
 }
 
 - (IBAction) browseButtonPressed:(id)sender {
     BLEPeerBrowserViewController *peerBrowser = [[BLEPeerBrowserViewController alloc] initWithSessionManager:self.sessionManager];
-    peerBrowser.transferCompletionBlock = ^void(BLETransfer *transfer, NSError *error) {
-        //incoming transfer finished
-        NSURL *fileURL = transfer.fileURL;
-    };
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:peerBrowser];
     [self presentViewController:nav animated:YES completion:nil];
 }

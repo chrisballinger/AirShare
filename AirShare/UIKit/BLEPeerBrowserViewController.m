@@ -10,6 +10,7 @@
 #import "BLESessionViewController.h"
 #import "BLEPeerTableViewCell.h"
 #import "PureLayout.h"
+#import "BLEDataMessage.h"
 
 @interface BLEPeerBrowserViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSMutableOrderedSet *peers;
@@ -131,8 +132,6 @@ errorEstablishingSession:(NSError*)error {
     return self.peers.count;
 }
 
-#pragma mark UITableViewDelegate
-
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     BLEPeerTableViewCell *peerCell = [tableView dequeueReusableCellWithIdentifier:[BLEPeerTableViewCell cellIdentifier] forIndexPath:indexPath];
     BLEPeer *peer = [self.peers objectAtIndex:indexPath.row];
@@ -142,6 +141,15 @@ errorEstablishingSession:(NSError*)error {
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 45;
+}
+
+#pragma mark UITableViewDelegate
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    BLEPeer *peer = [self.peers objectAtIndex:indexPath.row];
+    NSData *data = [@"as;dfhsadlfj hsadlkfjhasdlfk jhsadflk jhasdflk jhasdfh saudipf hasuiofu hasoidf baowiub wpoigu abwoigu bsoirgub4gp aierngiuearbgp wiqugb peia;rgjb piu@" dataUsingEncoding:NSUTF8StringEncoding];
+    BLEDataMessage *dataMessage = [[BLEDataMessage alloc] initWithData:data];
+    [self.sessionManager sendSessionMessage:dataMessage toPeer:peer];
 }
 
 @end

@@ -10,6 +10,7 @@
 #import "BLELocalPeer.h"
 #import "BLESession.h"
 #import "BLETransport.h"
+#import "BLESessionMessage.h"
 
 @class BLESessionManager;
 
@@ -40,11 +41,7 @@ errorEstablishingSession:(NSError*)error;
 
 - (NSArray*) discoveredPeers;
 
-/** Start synchronous session with peer, default 10s timeout */
-- (void) startSessionWithPeer:(BLEPeer*)peer;
-
-/** Start synchronous session with remote peer */
-- (void) startSessionWithPeer:(BLEPeer*)peer
-                      timeout:(NSTimeInterval)timeout;
+- (void) sendSessionMessage:(BLESessionMessage*)sessionMessage
+                     toPeer:(BLEPeer*)peer;
 
 @end

@@ -149,14 +149,18 @@ static NSString * const kBLEBroadcasterRestoreIdentifier = @"kBLEBroadcasterRest
         dispatch_async(self.delegateQueue, ^{
             [self.delegate device:self dataReceived:data fromIdentifier:identifier];
         });
-        [peripheral respondToRequest:request withResult:CBATTErrorSuccess];
+        if (request) {
+            [peripheral respondToRequest:request withResult:CBATTErrorSuccess];
+        }
     }];
     
 }
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveReadRequest:(CBATTRequest *)request {
     NSLog(@"didReceiveReadRequest: %@", request);
-    [peripheral respondToRequest:request withResult:CBATTErrorSuccess];
+    if (request) {
+        [peripheral respondToRequest:request withResult:CBATTErrorSuccess];
+    }
 }
 
 @end

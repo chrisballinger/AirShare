@@ -8,6 +8,9 @@
 
 @interface BLEPeer : NSObject
 
+/** internal transport identifier */
+@property (nonatomic, strong, readonly) NSMutableSet *identifiers;
+
 /** Serves as unique identifier */
 @property (nonatomic, strong, readonly) NSData *publicKey;
 

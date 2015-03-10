@@ -66,15 +66,17 @@
     }];
 }
 
-/** Start synchronous session with peer, default 10s timeout */
-- (void) startSessionWithPeer:(BLEPeer*)peer {
-    
+- (NSArray *)discoveredPeers {
+    return [self.identifiersToPeers allValues];
 }
 
-/** Start synchronous session with remote peer */
-- (void) startSessionWithPeer:(BLEPeer*)peer
-                      timeout:(NSTimeInterval)timeout {
-    
+- (void) sendSessionMessage:(BLESessionMessage*)sessionMessage
+                     toPeer:(BLEPeer*)peer {
+    NSString *identifier = [peer.identifiers anyObject];
+    BLETransport *transport = [self preferredTransportForPeer:peer];
+    NSData *data = sessionMessage.serializedData;
+    NSError *error = nil;
+    [transport sendData:data toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
 }
 
 #pragma mark BLETransportDelegate
@@ -119,6 +121,7 @@
         NSNumber *RSSI = [extraInfo objectForKey:@"RSSI"];
         peer.RSSI = RSSI;
         peer.lastSeenDate = [NSDate date];
+        [peer.identifiers addObject:identifier];
         dispatch_async(self.delegateQueue, ^{
             [self.delegate sessionManager:self peer:peer statusUpdated:connectionStatus];
         });
@@ -157,6 +160,7 @@
         BLEPeer *peer = [self peerForIdentifier:identifier];
         if (!peer) {
             peer = [[BLEPeer alloc] initWithPublicKey:identityMessage.publicKey];
+            [peer.identifiers addObject:identifier];
             [self setPeer:peer forIndentifier:identifier];
             BLEIdentityMessage *identityMessage = [[BLEIdentityMessage alloc] initWithPeer:self.localPeer];
             BLETransport *transport = [self preferredTransportForPeer:peer];
@@ -172,8 +176,6 @@
     }
 }
 
-- (NSArray *)discoveredPeers {
-    return [self.identifiersToPeers allValues];
-}
+
 
 @end

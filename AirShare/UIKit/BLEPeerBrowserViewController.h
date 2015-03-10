@@ -12,7 +12,6 @@
 @interface BLEPeerBrowserViewController : UIViewController <BLESessionManagerDelegate>
 
 @property (nonatomic, strong, readonly) BLESessionManager *sessionManager;
-@property (nonatomic, strong) BLETransferCompletionBlock transferCompletionBlock;
 
 - (instancetype) initWithSessionManager:(BLESessionManager*)sessionManager;
 

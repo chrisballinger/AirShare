@@ -10,7 +10,6 @@
 
 @interface BLESessionViewController ()
 /** Set if outgoing transfer before showing view */
-@property (nonatomic, strong, readonly) BLETransfer *transfer;
 @property (nonatomic, strong) UIProgressView *progressView;
 @end
 
@@ -22,7 +21,7 @@
     return self;
 }
 
-- (instancetype) initWithOutgoingTransfer:(BLETransfer *)transfer {
+- (instancetype) initWithOutgoingTransfer:(BLEFileTransferMessage *)transfer {
     if (self = [self init]) {
         _transfer = transfer;
     }
@@ -64,7 +63,7 @@
 
 #pragma mark BLESession
 
-- (void) session:(BLESession*)session transferOffered:(BLETransfer*)transfer {
+- (void) session:(BLESession*)session transferOffered:(BLEFileTransferMessage*)transfer {
     [self.session acceptTransfer:transfer progress:^(float progress) {
         self.progressView.progress = progress;
     } completion:^(BOOL success, NSError *error) {
