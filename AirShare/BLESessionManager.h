@@ -15,11 +15,6 @@
 @class BLESessionManager;
 
 @protocol BLESessionManagerDelegate <NSObject>
-- (void) sessionManager:(BLESessionManager*)sessionManager
-errorEstablishingSession:(NSError*)error;
-
-- (void) sessionManager:(BLESessionManager*)sessionManager
-     sessionEstablished:(BLESession*)session;
 
 - (void) sessionManager:(BLESessionManager *)sessionManager
                    peer:(BLEPeer *)peer

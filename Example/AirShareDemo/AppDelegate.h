@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BLESessionManager.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
+@property (nonatomic, strong) BLESessionManager *sessionManager;
 
 @end
 

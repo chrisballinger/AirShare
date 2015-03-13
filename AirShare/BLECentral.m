@@ -56,6 +56,8 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
     }
     CBCharacteristic *characteristic = [self dataCharacteristicForPeripheral:peripheral];
     [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+    NSLog(@"Writing %d bytes to peripheral: %@", (int)data.length, peripheral);
+
 }
 
 - (BOOL) hasSeenIdentifier:(NSString*)identifier {
@@ -92,6 +94,9 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
     NSArray *peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey];
     [peripherals enumerateObjectsUsingBlock:^(CBPeripheral *peripheral, NSUInteger idx, BOOL *stop) {
         [self.allDiscoveredPeripherals setObject:peripheral forKey:peripheral.identifier.UUIDString];
+        if (peripheral.state == CBPeripheralStateConnected) {
+            [self.connectedPeripherals setObject:peripheral forKey:peripheral.identifier.UUIDString];
+        }
     }];
 }
 

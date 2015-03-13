@@ -21,10 +21,17 @@
 @implementation BLEPeerBrowserViewController
 
 - (instancetype) initWithSessionManager:(BLESessionManager*)sessionManager {
-    if (self = [super init]) {
+    if (self = [self init]) {
         _sessionManager = sessionManager;
         self.sessionManager.delegate = self;
         self.sessionManager.delegateQueue = dispatch_get_main_queue();
+    }
+    return self;
+}
+
+- (instancetype) init {
+    if (self = [super init]) {
+        self.title = NSLocalizedString(@"Peer Browser", @"title for peer browser");
     }
     return self;
 }
@@ -51,8 +58,8 @@
     [super viewDidLoad];
     self.peers = [NSMutableOrderedSet orderedSet];
     [self setupTableView];
-    [self setupDoneButton];
-    [self setupBroadcastButton];
+    //[self setupDoneButton];
+    //[self setupBroadcastButton];
     [self updateViewConstraints];
 }
 

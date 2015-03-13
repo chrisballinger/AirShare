@@ -8,7 +8,7 @@
 
 #import "BLEPeer.h"
 
-@interface BLELocalPeer : BLEPeer
+@interface BLELocalPeer : BLEPeer <NSSecureCoding>
 
 @property (nonatomic, strong, readonly) NSData *privateKey;
 

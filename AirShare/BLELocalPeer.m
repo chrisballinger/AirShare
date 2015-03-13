@@ -17,4 +17,20 @@
     return self;
 }
 
+- (instancetype) initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super initWithCoder:aDecoder]) {
+        _privateKey = [aDecoder decodeObjectOfClass:[NSData class] forKey:NSStringFromSelector(@selector(privateKey))];
+    }
+    return self;
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder {
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:self.privateKey forKey:NSStringFromSelector(@selector(privateKey))];
+}
+
++ (BOOL) supportsSecureCoding {
+    return YES;
+}
+
 @end

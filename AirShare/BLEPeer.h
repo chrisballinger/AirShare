@@ -6,7 +6,7 @@
 //
 //
 
-@interface BLEPeer : NSObject
+@interface BLEPeer : NSObject <NSSecureCoding>
 
 /** internal transport identifier */
 @property (nonatomic, strong, readonly) NSMutableSet *identifiers;

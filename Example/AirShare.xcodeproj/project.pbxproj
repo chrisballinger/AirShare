@@ -17,7 +17,6 @@
 		D9111E2E1A71EA0B004AFD08 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9111E2D1A71EA0B004AFD08 /* MediaPlayer.framework */; };
 		D9914B8F1A96B55900D4066F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D9914B851A96B55900D4066F /* AppDelegate.m */; };
 		D9914B901A96B55900D4066F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9914B861A96B55900D4066F /* LaunchScreen.xib */; };
-		D9914B911A96B55900D4066F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D9914B881A96B55900D4066F /* Main.storyboard */; };
 		D9914B921A96B55900D4066F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9914B8A1A96B55900D4066F /* Images.xcassets */; };
 		D9914B941A96B55900D4066F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D9914B8C1A96B55900D4066F /* main.m */; };
 		D9914B951A96B55900D4066F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D9914B8E1A96B55900D4066F /* ViewController.m */; };
@@ -46,7 +45,6 @@
 		D9914B841A96B55900D4066F /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D9914B851A96B55900D4066F /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		D9914B871A96B55900D4066F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		D9914B891A96B55900D4066F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D9914B8A1A96B55900D4066F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		D9914B8B1A96B55900D4066F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9914B8C1A96B55900D4066F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -166,7 +164,6 @@
 				D9914B841A96B55900D4066F /* AppDelegate.h */,
 				D9914B851A96B55900D4066F /* AppDelegate.m */,
 				D9914B861A96B55900D4066F /* LaunchScreen.xib */,
-				D9914B881A96B55900D4066F /* Main.storyboard */,
 				D9914B8A1A96B55900D4066F /* Images.xcassets */,
 				D9914B8B1A96B55900D4066F /* Info.plist */,
 				D9914B8C1A96B55900D4066F /* main.m */,
@@ -269,7 +266,6 @@
 			files = (
 				D9914B921A96B55900D4066F /* Images.xcassets in Resources */,
 				D9914B901A96B55900D4066F /* LaunchScreen.xib in Resources */,
-				D9914B911A96B55900D4066F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,14 +372,6 @@
 			name = LaunchScreen.xib;
 			sourceTree = "<group>";
 		};
-		D9914B881A96B55900D4066F /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D9914B891A96B55900D4066F /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -450,7 +438,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				INFOPLIST_FILE = AirShareDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = AirShareDemo;
@@ -523,7 +511,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				INFOPLIST_FILE = AirShareDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;

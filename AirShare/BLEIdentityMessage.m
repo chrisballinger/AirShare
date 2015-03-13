@@ -20,6 +20,7 @@ NSString * const kBLEIdentityMessageHeaderAliasKey = @"alias";
 
 - (instancetype) initWithPeer:(BLEPeer *)peer {
     if (self = [super init]) {
+        NSParameterAssert(peer.publicKey != nil);
         _publicKey = peer.publicKey;
     }
     return self;
@@ -42,7 +43,10 @@ NSString * const kBLEIdentityMessageHeaderAliasKey = @"alias";
 - (NSMutableDictionary*) headers {
     NSMutableDictionary *headers = [super headers];
     NSString *publicKeyString = [self.publicKey base64EncodedStringWithOptions:0];
-    [headers setObject:publicKeyString forKey:kBLEIdentityMessageHeaderPublicKey];
+    NSAssert(publicKeyString != nil, @"pubkey is nil!");
+    if (publicKeyString) {
+        [headers setObject:publicKeyString forKey:kBLEIdentityMessageHeaderPublicKey];
+    }
     return headers;
 }
 

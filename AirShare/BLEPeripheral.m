@@ -56,6 +56,7 @@ static NSString * const kBLEBroadcasterRestoreIdentifier = @"kBLEBroadcasterRest
     }
     NSUInteger mtu = central.maximumUpdateValueLength;
     BOOL success = [self.peripheralManager updateValue:data forCharacteristic:self.dataCharacteristic onSubscribedCentrals:@[central]];
+    NSLog(@"Writing %d bytes to central: %@", (int)data.length, central);
     if (success) {
         [self.dataQueue popDataForIdentifier:identifier];
     }
@@ -144,14 +145,12 @@ static NSString * const kBLEBroadcasterRestoreIdentifier = @"kBLEBroadcasterRest
     NSLog(@"didReceiveWriteRequests: %@", requests);
     [requests enumerateObjectsUsingBlock:^(CBATTRequest *request, NSUInteger idx, BOOL *stop) {
         NSData *data = request.value;
-        NSLog(@"write %@", data);
+        NSLog(@"write (%d bytes) %@", (int)data.length, data);
         NSString *identifier = request.central.identifier.UUIDString;
         dispatch_async(self.delegateQueue, ^{
             [self.delegate device:self dataReceived:data fromIdentifier:identifier];
         });
-        if (request) {
-            [peripheral respondToRequest:request withResult:CBATTErrorSuccess];
-        }
+        [peripheral respondToRequest:request withResult:CBATTErrorSuccess];
     }];
     
 }
