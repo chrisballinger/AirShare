@@ -19,7 +19,6 @@
 		D9914B901A96B55900D4066F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9914B861A96B55900D4066F /* LaunchScreen.xib */; };
 		D9914B921A96B55900D4066F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9914B8A1A96B55900D4066F /* Images.xcassets */; };
 		D9914B941A96B55900D4066F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D9914B8C1A96B55900D4066F /* main.m */; };
-		D9914B951A96B55900D4066F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D9914B8E1A96B55900D4066F /* ViewController.m */; };
 		D9C89F3C1A6F0624001C8ECA /* AirShareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D9C89F3B1A6F0624001C8ECA /* AirShareTests.m */; };
 /* End PBXBuildFile section */
 
@@ -48,8 +47,6 @@
 		D9914B8A1A96B55900D4066F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		D9914B8B1A96B55900D4066F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9914B8C1A96B55900D4066F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D9914B8D1A96B55900D4066F /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		D9914B8E1A96B55900D4066F /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		D9C89F3B1A6F0624001C8ECA /* AirShareTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirShareTests.m; sourceTree = "<group>"; };
 		E366AB8A60A9B645823AB185 /* Pods-AirShareDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirShareDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-AirShareDemo/Pods-AirShareDemo.release.xcconfig"; sourceTree = "<group>"; };
 		E7343A773D1F9A979660CF64 /* libPods-AirShareDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirShareDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,8 +164,6 @@
 				D9914B8A1A96B55900D4066F /* Images.xcassets */,
 				D9914B8B1A96B55900D4066F /* Info.plist */,
 				D9914B8C1A96B55900D4066F /* main.m */,
-				D9914B8D1A96B55900D4066F /* ViewController.h */,
-				D9914B8E1A96B55900D4066F /* ViewController.m */,
 			);
 			path = AirShareDemo;
 			sourceTree = SOURCE_ROOT;
@@ -347,7 +342,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D9914B951A96B55900D4066F /* ViewController.m in Sources */,
 				D9914B941A96B55900D4066F /* main.m in Sources */,
 				D9914B8F1A96B55900D4066F /* AppDelegate.m in Sources */,
 			);

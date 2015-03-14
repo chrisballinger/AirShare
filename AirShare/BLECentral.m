@@ -9,8 +9,6 @@
 #import "BLECentral.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 
-static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdentifier";
-
 @interface BLECentral () <CBCentralManagerDelegate, CBPeripheralDelegate>
 @property (nonatomic, strong, readonly) NSMutableDictionary *allDiscoveredPeripherals;
 @property (nonatomic, strong, readonly) NSMutableDictionary *connectedPeripherals;
@@ -23,8 +21,9 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
 
 - (instancetype) initWithDelegate:(id<BLEBluetoothDeviceDelegate>)delegate
                       serviceUUID:(CBUUID*)serviceUUID
-               characteristicUUID:(CBUUID*)characteristicUUID {
-    if (self = [super initWithDelegate:delegate serviceUUID:serviceUUID characteristicUUID:characteristicUUID]) {
+               characteristicUUID:(CBUUID*)characteristicUUID
+               supportsBackground:(BOOL)supportsBackground {
+    if (self = [super initWithDelegate:delegate serviceUUID:serviceUUID characteristicUUID:characteristicUUID supportsBackground:supportsBackground]) {
         _allDiscoveredPeripherals = [NSMutableDictionary dictionary];
         _connectedPeripherals = [NSMutableDictionary dictionary];
         _peripheralDataCharacteristics = [NSMutableDictionary dictionary];
@@ -82,9 +81,13 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
 }
 
 - (void) setupCentral {
+    NSMutableDictionary *options = [NSMutableDictionary dictionary];
+    if (self.supportsBackground) {
+        [options setObject:self.serviceUUID.UUIDString forKey:CBPeripheralManagerOptionRestoreIdentifierKey];
+    }
     _centralManager = [[CBCentralManager alloc] initWithDelegate:self
                                                            queue:self.eventQueue
-                                                         options:@{CBCentralManagerOptionRestoreIdentifierKey: kBLEScannerRestoreIdentifier}];
+                                                         options:options];
 }
 
 #pragma mark CBCentralManagerDelegate
@@ -140,7 +143,7 @@ static NSString * const kBLEScannerRestoreIdentifier = @"kBLEScannerRestoreIdent
 
 - (void) centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
     NSLog(@"didConnectPeripheral: %@", peripheral);
-    [peripheral discoverServices:nil];
+    [peripheral discoverServices:@[self.serviceUUID]];
     dispatch_async(self.delegateQueue, ^{
         [self.delegate device:self identifierUpdated:peripheral.identifier.UUIDString status:BLEConnectionStatusConnecting extraInfo:nil];
     });

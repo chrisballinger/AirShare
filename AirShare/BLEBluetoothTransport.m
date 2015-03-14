@@ -12,12 +12,19 @@
 
 @implementation BLEBluetoothTransport
 
-- (instancetype) initWithServiceName:(NSString *)serviceName delegate:(id<BLETransportDelegate>)delegate {
+- (instancetype) initWithServiceName:(NSString *)serviceName delegate:(id<BLETransportDelegate>)delegate supportsBackground:(BOOL)supportsBackground {
     if (self = [super initWithServiceName:serviceName delegate:delegate]) {
+        _supportsBackground = supportsBackground;
         CBUUID *characteristicUUID = [CBUUID UUIDWithString:@"72A7700C-859D-4317-9E35-D7F5A93005B1"];
         CBUUID *serviceUUID = [CBUUID UUIDWithString:@"B491602C-C912-47AE-B639-9C17A4AADB06"];
-        _central = [[BLECentral alloc] initWithDelegate:self serviceUUID:serviceUUID characteristicUUID:characteristicUUID];
-        _peripheral = [[BLEPeripheral alloc] initWithDelegate:self serviceUUID:serviceUUID characteristicUUID:characteristicUUID];
+        _central = [[BLECentral alloc] initWithDelegate:self serviceUUID:serviceUUID characteristicUUID:characteristicUUID supportsBackground:supportsBackground];
+        _peripheral = [[BLEPeripheral alloc] initWithDelegate:self serviceUUID:serviceUUID characteristicUUID:characteristicUUID supportsBackground:supportsBackground];
+    }
+    return self;
+}
+
+- (instancetype) initWithServiceName:(NSString *)serviceName delegate:(id<BLETransportDelegate>)delegate {
+    if (self = [self initWithServiceName:serviceName delegate:delegate supportsBackground:NO]) {
     }
     return self;
 }
@@ -45,10 +52,10 @@
         BOOL seenOnPeripheral = [self.peripheral hasSeenIdentifier:identifier];
         if (seenOnCentral) {
             [self.central sendData:data toIdentifier:identifier error:error];
-        }
-        if (seenOnPeripheral) {
+        } else if (seenOnPeripheral) {
             [self.peripheral sendData:data toIdentifier:identifier error:error];
-        } else {
+        } else if (!seenOnCentral && !seenOnPeripheral) {
+            NSAssert(NO, @"OH NO!");
             NSLog(@"identifier not seen: %@", identifier);
         }
     }];

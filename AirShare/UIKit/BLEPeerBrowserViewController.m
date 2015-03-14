@@ -7,10 +7,10 @@
 //
 
 #import "BLEPeerBrowserViewController.h"
-#import "BLESessionViewController.h"
 #import "BLEPeerTableViewCell.h"
 #import "PureLayout.h"
 #import "BLEDataMessage.h"
+#import "BLEFileTransferMessage.h"
 
 @interface BLEPeerBrowserViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSMutableOrderedSet *peers;
@@ -91,23 +91,26 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+
+
+- (NSData*) generateTestDataOfLength:(NSUInteger)length {
+    NSMutableData *data = [NSMutableData dataWithCapacity:length];
+    uint8_t x = 0;
+    for (NSUInteger i = 0; i < length; i++) {
+        x++;
+        [data appendBytes:&x length:1];
+    }
+    return data;
+}
+
 #pragma mark BLESessionManagerDelegate
 
-- (void) sessionManager:(BLESessionManager*)sessionManager
-errorEstablishingSession:(NSError*)error {
-    
-}
-
-- (void) sessionManager:(BLESessionManager*)sessionManager
-     sessionEstablished:(BLESession*)session {
-    BLESessionViewController *sessionView = [[BLESessionViewController alloc] initWithSession:session sessionManager:self.sessionManager];
-    [self.navigationController pushViewController:sessionView animated:YES];
-}
 
 - (void) sessionManager:(BLESessionManager *)sessionManager
-                   peer:(BLEPeer *)peer
+                   peer:(BLERemotePeer *)peer
           statusUpdated:(BLEConnectionStatus)status {
-    NSUInteger index = [self.peers indexOfObjectPassingTest:^BOOL(BLEPeer *testPeer, NSUInteger idx, BOOL *stop) {
+    NSUInteger index = [self.peers indexOfObjectPassingTest:^BOOL(BLERemotePeer *testPeer, NSUInteger idx, BOOL *stop) {
         if ([peer.publicKey isEqual:testPeer.publicKey]) {
             *stop = YES;
             return YES;
@@ -119,7 +122,7 @@ errorEstablishingSession:(NSError*)error {
     } else {
         [self.peers replaceObjectAtIndex:index withObject:peer];
     }
-    [self.peers sortUsingComparator:^NSComparisonResult(BLEPeer *peer1, BLEPeer *peer2) {
+    [self.peers sortUsingComparator:^NSComparisonResult(BLERemotePeer *peer1, BLERemotePeer *peer2) {
         NSComparisonResult result = NSOrderedSame;
         if (peer1.RSSI && peer2.RSSI) {
             result = [peer1.RSSI compare:peer2.RSSI];
@@ -127,6 +130,17 @@ errorEstablishingSession:(NSError*)error {
         return result;
     }];
     [self.tableView reloadData];
+}
+
+- (void) sessionManager:(BLESessionManager *)sessionManager receivedMessage:(BLESessionMessage *)message fromPeer:(BLERemotePeer *)peer {
+    if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
+        BLEFileTransferMessage *fileTransfer = (BLEFileTransferMessage*)message;
+        if (fileTransfer.transferType == BLEFileTransferMessageTypeOffer) {
+            fileTransfer.transferType = BLEFileTransferMessageTypeAccept;
+        }
+        [self.sessionManager sendSessionMessage:fileTransfer toPeer:peer];
+        NSLog(@"received message from peer: %@ %@", message, peer);
+    }
 }
 
 #pragma mark UITableViewDataSource
@@ -153,10 +167,14 @@ errorEstablishingSession:(NSError*)error {
 #pragma mark UITableViewDelegate
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    BLEPeer *peer = [self.peers objectAtIndex:indexPath.row];
-    NSData *data = [@"as;dfhsadlfj hsadlkfjhasdlfk jhsadflk jhasdflk jhasdfh saudipf hasuiofu hasoidf baowiub wpoigu abwoigu bsoirgub4gp aierngiuearbgp wiqugb peia;rgjb piu@" dataUsingEncoding:NSUTF8StringEncoding];
-    BLEDataMessage *dataMessage = [[BLEDataMessage alloc] initWithData:data];
-    [self.sessionManager sendSessionMessage:dataMessage toPeer:peer];
+    BLERemotePeer *peer = [self.peers objectAtIndex:indexPath.row];
+    NSData *testData = [self generateTestDataOfLength:16000];
+    NSString *tempDirectory = NSTemporaryDirectory();
+    NSString *testPath = [tempDirectory stringByAppendingPathComponent:@"test.file"];
+    BOOL success = [testData writeToFile:testPath atomically:YES];
+    NSParameterAssert(success);
+    BLEFileTransferMessage *fileTransfer = [[BLEFileTransferMessage alloc] initWithFileURL:[NSURL fileURLWithPath:testPath] transferType:BLEFileTransferMessageTypeOffer];
+    [self.sessionManager sendSessionMessage:fileTransfer toPeer:peer];
 }
 
 @end

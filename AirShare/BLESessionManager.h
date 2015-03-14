@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BLELocalPeer.h"
-#import "BLESession.h"
+#import "BLERemotePeer.h"
 #import "BLETransport.h"
 #import "BLESessionMessage.h"
 
@@ -17,8 +17,12 @@
 @protocol BLESessionManagerDelegate <NSObject>
 
 - (void) sessionManager:(BLESessionManager *)sessionManager
-                   peer:(BLEPeer *)peer
+                   peer:(BLERemotePeer *)peer
           statusUpdated:(BLEConnectionStatus)status;
+
+- (void) sessionManager:(BLESessionManager *)sessionManager
+        receivedMessage:(BLESessionMessage*)message
+               fromPeer:(BLERemotePeer*)peer;
 
 @end
 
@@ -27,6 +31,7 @@
 @property (nonatomic, strong, readonly) BLELocalPeer *localPeer;
 @property (nonatomic, weak) id<BLESessionManagerDelegate> delegate;
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;
+@property (nonatomic) BOOL supportsBackground;
 
 - (instancetype) initWithLocalPeer:(BLELocalPeer*)localPeer delegate:(id<BLESessionManagerDelegate>)delegate;
 
@@ -37,6 +42,6 @@
 - (NSArray*) discoveredPeers;
 
 - (void) sendSessionMessage:(BLESessionMessage*)sessionMessage
-                     toPeer:(BLEPeer*)peer;
+                     toPeer:(BLERemotePeer*)peer;
 
 @end

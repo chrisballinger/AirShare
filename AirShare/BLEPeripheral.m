@@ -9,9 +9,6 @@
 #import "BLEPeripheral.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 
-static NSString * const kBLEBroadcasterRestoreIdentifier = @"kBLEBroadcasterRestoreIdentifier";
-
-
 @interface BLEPeripheral () <CBPeripheralManagerDelegate>
 @property (nonatomic, strong, readonly) CBPeripheralManager *peripheralManager;
 @property (nonatomic) BOOL serviceAdded;
@@ -26,8 +23,9 @@ static NSString * const kBLEBroadcasterRestoreIdentifier = @"kBLEBroadcasterRest
 
 - (instancetype) initWithDelegate:(id<BLEBluetoothDeviceDelegate>)delegate
                       serviceUUID:(CBUUID*)serviceUUID
-               characteristicUUID:(CBUUID*)characteristicUUID {
-    if (self = [super initWithDelegate:delegate serviceUUID:serviceUUID characteristicUUID:characteristicUUID]) {
+               characteristicUUID:(CBUUID*)characteristicUUID
+               supportsBackground:(BOOL)supportsBackground {
+    if (self = [super initWithDelegate:delegate serviceUUID:serviceUUID characteristicUUID:characteristicUUID supportsBackground:supportsBackground]) {
         _subscribedCentrals = [NSMutableDictionary dictionary];
         [self setupCharacteristics];
         [self setupServices];
@@ -69,10 +67,14 @@ static NSString * const kBLEBroadcasterRestoreIdentifier = @"kBLEBroadcasterRest
 
 
 - (void) setupPeripheral {
+    NSMutableDictionary *options = [NSMutableDictionary dictionary];
+    [options setObject:@YES forKey:CBPeripheralManagerOptionShowPowerAlertKey];
+    if (self.supportsBackground) {
+        [options setObject:self.serviceUUID.UUIDString forKey:CBPeripheralManagerOptionRestoreIdentifierKey];
+    }
     _peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self
                                                                  queue:self.eventQueue
-                                                               options:@{CBPeripheralManagerOptionRestoreIdentifierKey: kBLEBroadcasterRestoreIdentifier,
-                                                                         CBPeripheralManagerOptionShowPowerAlertKey: @YES}];
+                                                               options:options];
 }
 
 - (void) setupCharacteristics {

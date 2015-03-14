@@ -40,10 +40,12 @@ identifierUpdated:(NSString*)identifier
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;
 @property (nonatomic, strong) dispatch_queue_t eventQueue;
 @property (nonatomic, strong, readonly) BLETransportDataQueue *dataQueue;
+@property (nonatomic) BOOL supportsBackground;
 
 - (instancetype) initWithDelegate:(id<BLEBluetoothDeviceDelegate>)delegate
                       serviceUUID:(CBUUID*)serviceUUID
-               characteristicUUID:(CBUUID*)characteristicUUID;
+               characteristicUUID:(CBUUID*)characteristicUUID
+               supportsBackground:(BOOL)supportsBackground;
 
 - (BOOL) sendData:(NSData*)data
      toIdentifier:(NSString*)identifier

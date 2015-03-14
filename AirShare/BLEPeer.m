@@ -29,7 +29,6 @@
 
 - (instancetype) initWithPublicKey:(NSData*)publicKey {
     if (self = [super init]) {
-        _identifiers = [NSMutableSet set];
         _publicKey = publicKey;
     }
     return self;

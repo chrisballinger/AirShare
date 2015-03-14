@@ -13,7 +13,7 @@ PODS:
   - CocoaLumberjack/Core (1.9.2)
   - CocoaLumberjack/Extensions (1.9.2):
     - CocoaLumberjack/Core
-  - libsodium (1.0.1)
+  - libsodium (1.0.2)
   - PureLayout (2.0.5)
 
 DEPENDENCIES:
@@ -24,9 +24,9 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  AirShare: 3b743c0a08c1c402a240f3e496560ddfed66c5c9
+  AirShare: e6e9778628983029e7af56594163bdd596156ae4
   CocoaLumberjack: 205769c032b5fef85b92472046bcc8b7e7c8a817
-  libsodium: ac34cc59b942350fb1377380cfb31f05c3d6170e
+  libsodium: 16487c168b28aa4e55614d6364e6932ce73137d9
   PureLayout: 63a3257320223e8edddcd3afb407445f85a6bf74
 
-COCOAPODS: 0.35.0
+COCOAPODS: 0.36.0

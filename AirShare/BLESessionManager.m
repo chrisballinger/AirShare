@@ -11,6 +11,7 @@
 #import "BLEIdentityMessage.h"
 #import "BLEBluetoothTransport.h"
 #import "BLEDataMessage.h"
+#import "BLEFileTransferMessage.h"
 
 @interface BLESessionManager() <BLESessionMessageReceiverDelegate>
 @property (nonatomic, strong, readonly) NSMutableSet *transports;
@@ -20,6 +21,8 @@
 @property (nonatomic, strong, readonly) NSMutableSet *identifiersUndergoingPeerDiscovery;
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *receiverForIdentifier;
+
+@property (nonatomic, strong, readonly) NSMutableDictionary *offeredTransfers;
 @end
 
 @implementation BLESessionManager
@@ -32,25 +35,26 @@
         _identifiersToPeers = [NSMutableDictionary dictionary];
         _identifiersUndergoingPeerDiscovery = [NSMutableSet set];
         _receiverForIdentifier = [NSMutableDictionary dictionary];
+        _offeredTransfers = [NSMutableDictionary dictionary];
         [self registerTransports];
     }
     return self;
 }
 
 - (void) registerTransports {
-    BLEBluetoothTransport *transport = [[BLEBluetoothTransport alloc] initWithServiceName:@"AirShare" delegate:self];
+    BLEBluetoothTransport *transport = [[BLEBluetoothTransport alloc] initWithServiceName:@"AirShare" delegate:self supportsBackground:NO];
     [self.transports addObject:transport];
 }
 
-- (BLETransport*) preferredTransportForPeer:(BLEPeer*)peer {
+- (BLETransport*) preferredTransportForPeer:(BLERemotePeer*)peer {
     return [self.transports anyObject];
 }
 
-- (void) setPeer:(BLEPeer*)peer forIndentifier:(NSString*)identifier {
+- (void) setPeer:(BLERemotePeer*)peer forIndentifier:(NSString*)identifier {
     [self.identifiersToPeers setObject:peer forKey:identifier];
 }
 
-- (BLEPeer*)peerForIdentifier:(NSString*)identifier {
+- (BLERemotePeer*)peerForIdentifier:(NSString*)identifier {
     return [self.identifiersToPeers objectForKey:identifier];
 }
 
@@ -71,7 +75,10 @@
 }
 
 - (void) sendSessionMessage:(BLESessionMessage*)sessionMessage
-                     toPeer:(BLEPeer*)peer {
+                     toPeer:(BLERemotePeer*)peer {
+    if ([sessionMessage isKindOfClass:[BLEFileTransferMessage class]]) {
+        [self.offeredTransfers setObject:sessionMessage forKey:peer.publicKey];
+    }
     NSString *identifier = [peer.identifiers anyObject];
     BLETransport *transport = [self preferredTransportForPeer:peer];
     NSData *data = sessionMessage.serializedData;
@@ -106,7 +113,7 @@
   connectionStatus:(BLEConnectionStatus)connectionStatus
          extraInfo:(NSDictionary*)extraInfo {
     NSLog(@"identifierUpdated: %@ %d %@", identifier, (int)connectionStatus, extraInfo);
-    BLEPeer *peer = [self peerForIdentifier:identifier];
+    BLERemotePeer *peer = [self peerForIdentifier:identifier];
     if (!peer) {
         BOOL identifierUndergoingPeerDiscovery = [self.identifiersUndergoingPeerDiscovery containsObject:identifier];
         if (!identifierUndergoingPeerDiscovery) {
@@ -136,6 +143,8 @@
     if ([message isKindOfClass:[BLEDataMessage class]]) {
     } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
     
+    } else if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
+        
     }
 }
 
@@ -146,6 +155,8 @@
     NSLog(@"progress: %f", progress);
     if ([message isKindOfClass:[BLEDataMessage class]]) {
     } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
+    } else if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
+        
     }
 }
 
@@ -157,9 +168,9 @@
         BLEIdentityMessage *identityMessage = (BLEIdentityMessage*)message;
         NSString *identifier = receiver.context;
         [self.identifiersUndergoingPeerDiscovery removeObject:identifier];
-        BLEPeer *peer = [self peerForIdentifier:identifier];
+        BLERemotePeer *peer = [self peerForIdentifier:identifier];
         if (!peer) {
-            peer = [[BLEPeer alloc] initWithPublicKey:identityMessage.publicKey];
+            peer = [[BLERemotePeer alloc] initWithPublicKey:identityMessage.publicKey];
             [peer.identifiers addObject:identifier];
             [self setPeer:peer forIndentifier:identifier];
             BLEIdentityMessage *identityMessage = [[BLEIdentityMessage alloc] initWithPeer:self.localPeer];
@@ -173,7 +184,19 @@
         dispatch_async(self.delegateQueue, ^{
             [self.delegate sessionManager:self peer:peer statusUpdated:BLEConnectionStatusConnected];
         });
+    } else if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
+        BLEFileTransferMessage *fileTransfer = (BLEFileTransferMessage*)message;
+        if (fileTransfer.transferType == BLEFileTransferMessageTypeAccept) {
+            // start sending file
+            fileTransfer.transferType = BLEFileTransferMessageTypeAccept;
+        }
     }
+    
+    NSString *identifier = receiver.context;
+    BLERemotePeer *peer = [self peerForIdentifier:identifier];
+    dispatch_async(self.delegateQueue, ^{
+        [self.delegate sessionManager:self receivedMessage:message fromPeer:peer];
+    });
 }
 
 

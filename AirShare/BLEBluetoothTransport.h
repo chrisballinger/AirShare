@@ -19,5 +19,10 @@
 
 @property (nonatomic, strong) BLECentral *central;
 @property (nonatomic, strong) BLEPeripheral *peripheral;
+@property (nonatomic) BOOL supportsBackground;
+
+- (instancetype) initWithServiceName:(NSString*)serviceName
+                            delegate:(id<BLETransportDelegate>)delegate
+                  supportsBackground:(BOOL)supportsBackground;
 
 @end

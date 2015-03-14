@@ -12,7 +12,8 @@
 
 - (instancetype) initWithDelegate:(id<BLEBluetoothDeviceDelegate>)delegate
                       serviceUUID:(CBUUID*)serviceUUID
-               characteristicUUID:(CBUUID*)characteristicUUID {
+               characteristicUUID:(CBUUID*)characteristicUUID
+               supportsBackground:(BOOL)supportsBackground {
     if (self = [super init]) {
         _delegate = delegate;
         _serviceUUID = serviceUUID;
@@ -20,6 +21,7 @@
         _delegateQueue = dispatch_queue_create("BLEBluetoothDevice Delegate", 0);
         _eventQueue = dispatch_queue_create("Bluetooth Events", 0);
         _dataQueue = [[BLETransportDataQueue alloc] init];
+        _supportsBackground = supportsBackground;
     }
     return self;
 }
