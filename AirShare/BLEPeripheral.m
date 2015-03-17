@@ -37,8 +37,12 @@
 - (BOOL) sendData:(NSData*)data
      toIdentifier:(NSString*)identifier
             error:(NSError**)error {
-    [self.dataQueue queueData:data forIdentifier:identifier];
     CBCentral *central = [self.subscribedCentrals objectForKey:identifier];
+    NSUInteger mtu = 155;
+    if (central) {
+        mtu = central.maximumUpdateValueLength;
+    }
+    [self.dataQueue queueData:data forIdentifier:identifier mtu:mtu];
     if (!central) {
         return NO;
     }
@@ -52,7 +56,6 @@
     if (!data) {
         return;
     }
-    NSUInteger mtu = central.maximumUpdateValueLength;
     BOOL success = [self.peripheralManager updateValue:data forCharacteristic:self.dataCharacteristic onSubscribedCentrals:@[central]];
     NSLog(@"Writing %d bytes to central: %@", (int)data.length, central);
     if (success) {

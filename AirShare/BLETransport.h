@@ -56,6 +56,11 @@ typedef NS_ENUM(NSInteger, BLEConnectionStatus) {
          withMode:(BLETransportSendDataMode)mode
             error:(NSError**)error;
 
+- (BOOL) sendStream:(NSInputStream*)inputStream
+       toIdentifier:(NSString*)identifier
+           withMode:(BLETransportSendDataMode)mode
+              error:(NSError**)error;
+
 - (void) advertise;
 - (void) scan;
 - (void) stop;

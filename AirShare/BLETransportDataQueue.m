@@ -32,9 +32,23 @@
 
 /** Queues outgoing data for identifier */
 - (void) queueData:(NSData*)data
-     forIdentifier:(NSString*)identifier {
+     forIdentifier:(NSString*)identifier
+               mtu:(NSUInteger)mtu {
     NSMutableArray *queue = [self queueForIdentifier:identifier];
-    [queue insertObject:data atIndex:0];
+    if (data.length <= mtu) {
+        [queue insertObject:data atIndex:0];
+    } else {
+        // packetize data to MTU
+        NSUInteger length = [data length];
+        NSUInteger offset = 0;
+        do {
+            NSUInteger thisChunkSize = length - offset > mtu ? mtu : length - offset;
+            NSData* chunk = [NSData dataWithBytes:(char *)[data bytes] + offset
+                                                 length:thisChunkSize];
+            offset += thisChunkSize;
+            [queue insertObject:chunk atIndex:0];
+        } while (offset < length);
+    }
 }
 
 /** Return item at top of queue */

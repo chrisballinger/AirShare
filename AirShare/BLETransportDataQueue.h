@@ -12,7 +12,8 @@
 
 /** Queues outgoing data for identifier */
 - (void) queueData:(NSData*)data
-     forIdentifier:(NSString*)identifier;
+     forIdentifier:(NSString*)identifier
+               mtu:(NSUInteger)mtu;
 
 /** Return item at top of queue */
 - (NSData*) peekDataForIdentifier:(NSString*)identifier;

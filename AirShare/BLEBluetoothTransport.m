@@ -50,16 +50,26 @@
     [identifiers enumerateObjectsUsingBlock:^(NSString *identifier, NSUInteger idx, BOOL *stop) {
         BOOL seenOnCentral = [self.central hasSeenIdentifier:identifier];
         BOOL seenOnPeripheral = [self.peripheral hasSeenIdentifier:identifier];
-        if (seenOnCentral) {
-            [self.central sendData:data toIdentifier:identifier error:error];
-        } else if (seenOnPeripheral) {
+        if (seenOnCentral && seenOnPeripheral) {
+            NSLog(@"seen on both central and peripheral: %@", identifier);
+        }
+        if (seenOnPeripheral) {
             [self.peripheral sendData:data toIdentifier:identifier error:error];
+        } else if (seenOnCentral) {
+            [self.central sendData:data toIdentifier:identifier error:error];
         } else if (!seenOnCentral && !seenOnPeripheral) {
             NSAssert(NO, @"OH NO!");
             NSLog(@"identifier not seen: %@", identifier);
         }
     }];
     return NO;
+}
+
+- (BOOL) sendStream:(NSInputStream*)inputStream
+       toIdentifier:(NSString*)identifier
+           withMode:(BLETransportSendDataMode)mode
+              error:(NSError**)error {
+    
 }
 
 #pragma mark BLEBluetoothDeviceDelegate

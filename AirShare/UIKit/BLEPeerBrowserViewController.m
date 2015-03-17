@@ -133,13 +133,16 @@
 }
 
 - (void) sessionManager:(BLESessionManager *)sessionManager receivedMessage:(BLESessionMessage *)message fromPeer:(BLERemotePeer *)peer {
+    NSLog(@"received message from peer: %@ %@", message, peer);
     if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
         BLEFileTransferMessage *fileTransfer = (BLEFileTransferMessage*)message;
         if (fileTransfer.transferType == BLEFileTransferMessageTypeOffer) {
             fileTransfer.transferType = BLEFileTransferMessageTypeAccept;
+            [self.sessionManager sendSessionMessage:fileTransfer toPeer:peer];
         }
-        [self.sessionManager sendSessionMessage:fileTransfer toPeer:peer];
-        NSLog(@"received message from peer: %@ %@", message, peer);
+        if (fileTransfer.transferType == BLEFileTransferMessageTypeTransfer) {
+            NSLog(@"incoming file complete: %@", fileTransfer.fileURL);
+        }
     }
 }
 

@@ -77,7 +77,7 @@
 - (void) sendSessionMessage:(BLESessionMessage*)sessionMessage
                      toPeer:(BLERemotePeer*)peer {
     if ([sessionMessage isKindOfClass:[BLEFileTransferMessage class]]) {
-        [self.offeredTransfers setObject:sessionMessage forKey:peer.publicKey];
+        [self.offeredTransfers setObject:sessionMessage forKey:sessionMessage.identifer];
     }
     NSString *identifier = [peer.identifiers anyObject];
     BLETransport *transport = [self preferredTransportForPeer:peer];
@@ -163,6 +163,9 @@
 - (void) receiver:(BLESessionMessageReceiver*)receiver
  transferComplete:(BLESessionMessage*)message {
     NSLog(@"transferComplete");
+    NSString *identifier = receiver.context;
+    [self.receiverForIdentifier removeObjectForKey:identifier];
+    
     if ([message isKindOfClass:[BLEDataMessage class]]) {
     } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
         BLEIdentityMessage *identityMessage = (BLEIdentityMessage*)message;
@@ -188,11 +191,19 @@
         BLEFileTransferMessage *fileTransfer = (BLEFileTransferMessage*)message;
         if (fileTransfer.transferType == BLEFileTransferMessageTypeAccept) {
             // start sending file
-            fileTransfer.transferType = BLEFileTransferMessageTypeAccept;
+            BLEFileTransferMessage *outgoingTransfer = [self.offeredTransfers objectForKey:fileTransfer.identifer];
+            outgoingTransfer.transferType = BLEFileTransferMessageTypeTransfer;
+            [outgoingTransfer clearSerializationCache];
+            NSString *identifier = receiver.context;
+            NSData *serializedPrefixAndHeaderData = outgoingTransfer.serializedPrefixAndHeaderData;
+            BLERemotePeer *peer = [self peerForIdentifier:identifier];
+            BLETransport *transport = [self preferredTransportForPeer:peer];
+            [transport sendData:serializedPrefixAndHeaderData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:nil];
+            NSData *fileData = [NSData dataWithContentsOfURL:outgoingTransfer.fileURL];
+            [transport sendData:fileData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:nil];
         }
     }
     
-    NSString *identifier = receiver.context;
     BLERemotePeer *peer = [self peerForIdentifier:identifier];
     dispatch_async(self.delegateQueue, ^{
         [self.delegate sessionManager:self receivedMessage:message fromPeer:peer];

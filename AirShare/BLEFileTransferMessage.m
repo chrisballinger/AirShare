@@ -66,6 +66,8 @@ NSString * const kBLEFileTransferMessageHeaderTypeTransfer = @"filetransfer";
     _fileLength = [[headers objectForKey:kBLEFileTransferMessageHeaderOfferLengthKey] unsignedIntegerValue];
 }
 
+
+
 - (NSMutableDictionary*) headers {
     NSMutableDictionary *headers = [super headers];
     if (self.fileName.length) {

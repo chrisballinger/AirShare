@@ -35,7 +35,7 @@
 - (BOOL) sendData:(NSData*)data
      toIdentifier:(NSString*)identifier
             error:(NSError**)error {
-    [self.dataQueue queueData:data forIdentifier:identifier];
+    [self.dataQueue queueData:data forIdentifier:identifier mtu:155];
     CBPeripheral *periperal = [self.connectedPeripherals objectForKey:identifier];
     BLEConnectionStatus status = [self connectionStatusForPeripheral:periperal];
     if (status == BLEConnectionStatusConnected) {
@@ -46,6 +46,12 @@
         }
     }
     return YES;
+}
+
+- (BOOL) sendStream:(NSInputStream*)inputStream
+       toIdentifier:(NSString *)identifier
+              error:(NSError**)error {
+    
 }
 
 - (void) sendQueuedDataForConnectedPeripheral:(CBPeripheral*)peripheral {
