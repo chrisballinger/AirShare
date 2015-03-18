@@ -60,6 +60,7 @@
     NSLog(@"Writing %d bytes to central: %@", (int)data.length, central);
     if (success) {
         [self.dataQueue popDataForIdentifier:identifier];
+        [self writeQueuedDataForCentral:central];
     }
 }
 
@@ -132,10 +133,10 @@
 
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {
     NSArray *centrals = [self.subscribedCentrals allValues];
+    NSLog(@"peripheralManagerIsReadyToUpdateSubscribers: %@", centrals);
     [centrals enumerateObjectsUsingBlock:^(CBCentral *central, NSUInteger idx, BOOL *stop) {
         [self writeQueuedDataForCentral:central];
     }];
-    NSLog(@"peripheralManagerIsReadyToUpdateSubscribers");
 }
 
 - (void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral error:(NSError *)error {

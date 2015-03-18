@@ -16,6 +16,7 @@
 @property (nonatomic, strong) NSMutableOrderedSet *peers;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic) BOOL hasUpdatedConstraints;
+@property (nonatomic, strong) BLEFileTransferMessage *outgoingTransfer;
 @end
 
 @implementation BLEPeerBrowserViewController
