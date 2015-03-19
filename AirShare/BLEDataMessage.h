@@ -14,4 +14,6 @@
 
 - (instancetype) initWithData:(NSData*)data;
 
+- (BOOL) verifyHash;
+
 @end

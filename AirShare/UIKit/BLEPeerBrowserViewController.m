@@ -173,12 +173,15 @@
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     BLERemotePeer *peer = [self.peers objectAtIndex:indexPath.row];
     NSData *testData = [self generateTestDataOfLength:16000];
+    /*
     NSString *tempDirectory = NSTemporaryDirectory();
     NSString *testPath = [tempDirectory stringByAppendingPathComponent:@"test.file"];
     BOOL success = [testData writeToFile:testPath atomically:YES];
     NSParameterAssert(success);
     BLEFileTransferMessage *fileTransfer = [[BLEFileTransferMessage alloc] initWithFileURL:[NSURL fileURLWithPath:testPath] transferType:BLEFileTransferMessageTypeOffer];
-    [self.sessionManager sendSessionMessage:fileTransfer toPeer:peer];
+     */
+    BLEDataMessage *dataMessage = [[BLEDataMessage alloc] initWithData:testData];
+    [self.sessionManager sendSessionMessage:dataMessage toPeer:peer];
 }
 
 @end

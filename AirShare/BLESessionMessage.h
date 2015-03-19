@@ -20,6 +20,8 @@
 @property (nonatomic) NSUInteger payloadLength;
 @property (nonatomic, strong) NSString *type;
 
+@property (nonatomic, strong) NSData *payloadHash;
+
 /** outgoing */
 - (instancetype) initWithIdentifier:(NSString*)identifier;
 

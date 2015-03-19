@@ -7,6 +7,7 @@
 //
 
 #import "BLEDataMessage.h"
+#import "NSData+AirShare.h"
 
 @interface BLEDataMessage()
 @property (nonatomic, strong) NSMutableData *serializedMessage;
@@ -19,6 +20,7 @@
     if (self = [super init]) {
         _data = data;
         self.payloadLength = data.length;
+        self.payloadHash = [data ble_sha256];
     }
     return self;
 }
@@ -40,6 +42,17 @@
 
 + (NSString*) type {
     return @"DataTransferMessage";
+}
+
+- (BOOL) verifyHash {
+    if (!self.payloadHash) {
+        return NO;
+    }
+    NSData *payloadHash = [self.data ble_sha256];
+    if ([self.payloadHash isEqualToData:payloadHash]) {
+        return YES;
+    }
+    return NO;
 }
 
 @end

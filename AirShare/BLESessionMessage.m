@@ -13,6 +13,8 @@ const NSUInteger kBLESessionMessagePrefixLength = 3;
 NSString * const kBLESessionMessageHeaderTypeKey = @"type";
 NSString * const kBLESessionMessageHeaderPayloadLengthKey = @"length";
 NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
+NSString * const kBLESessionMessageHeaderSHA256Key = @"sha256";
+
 
 @interface BLESessionMessage ()
 @property (nonatomic, strong) NSData *cachedPrefixData;
@@ -93,6 +95,10 @@ NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
     _type = [headers objectForKey:kBLESessionMessageHeaderTypeKey];
     _identifer = [headers objectForKey:kBLESessionMessageHeaderIdentifierKey];
     _payloadLength = [[headers objectForKey:kBLESessionMessageHeaderPayloadLengthKey] unsignedIntegerValue];
+    NSString *payloadHashString = [headers objectForKey:kBLESessionMessageHeaderSHA256Key];
+    if (payloadHashString) {
+        _payloadHash = [[NSData alloc] initWithBase64EncodedString:payloadHashString options:0];
+    }
 }
 
 - (NSMutableDictionary*) headers {
@@ -100,6 +106,10 @@ NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
     [headers setObject:self.type forKey:kBLESessionMessageHeaderTypeKey];
     [headers setObject:self.identifer forKey:kBLESessionMessageHeaderIdentifierKey];
     [headers setObject:@(self.payloadLength) forKey:kBLESessionMessageHeaderPayloadLengthKey];
+    if (self.payloadHash) {
+        NSString *payloadHashString = [self.payloadHash base64EncodedStringWithOptions:0];
+        [headers setObject:payloadHashString forKey:kBLESessionMessageHeaderSHA256Key];
+    }
     return headers;
 }
 
