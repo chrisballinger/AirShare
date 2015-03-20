@@ -57,10 +57,12 @@
         return;
     }
     BOOL success = [self.peripheralManager updateValue:data forCharacteristic:self.dataCharacteristic onSubscribedCentrals:@[central]];
-    NSLog(@"Writing %d bytes to central: %@", (int)data.length, central);
     if (success) {
+        NSLog(@"Wrote %d bytes to central: %@", (int)data.length, central);
         [self.dataQueue popDataForIdentifier:identifier];
         [self writeQueuedDataForCentral:central];
+    } else {
+        NSLog(@"Error writing %d bytes to central: %@", (int)data.length, central);
     }
 }
 

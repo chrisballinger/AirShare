@@ -11,7 +11,7 @@
 const NSUInteger kBLESessionMessagePrefixLength = 3;
 
 NSString * const kBLESessionMessageHeaderTypeKey = @"type";
-NSString * const kBLESessionMessageHeaderPayloadLengthKey = @"length";
+NSString * const kBLESessionMessageHeaderPayloadLengthKey = @"body-length";
 NSString * const kBLESessionMessageHeaderIdentifierKey = @"id";
 NSString * const kBLESessionMessageHeaderSHA256Key = @"sha256";
 

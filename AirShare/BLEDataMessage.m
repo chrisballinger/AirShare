@@ -41,7 +41,7 @@
 }
 
 + (NSString*) type {
-    return @"DataTransferMessage";
+    return @"datatransfer";
 }
 
 - (BOOL) verifyHash {

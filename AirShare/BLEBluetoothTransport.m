@@ -58,7 +58,7 @@
         } else if (seenOnCentral) {
             [self.central sendData:data toIdentifier:identifier error:error];
         } else if (!seenOnCentral && !seenOnPeripheral) {
-            NSAssert(NO, @"OH NO!");
+            //NSAssert(NO, @"OH NO!");
             NSLog(@"identifier not seen: %@", identifier);
         }
     }];

@@ -53,11 +53,12 @@ NSString * const kBLEIdentityMessageHeaderAliasKey = @"alias";
 - (void) parseHeaders:(NSDictionary *)headers {
     [super parseHeaders:headers];
     NSString *publicKeyString = [headers objectForKey:kBLEIdentityMessageHeaderPublicKey];
-    self.publicKey = [[NSData alloc] initWithBase64EncodedString:publicKeyString options:0];
+    self.publicKey = [[NSData alloc] initWithBase64EncodedString:publicKeyString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSParameterAssert(self.publicKey != nil);
 }
 
 + (NSString*) type {
-    return @"IdentityMessage";
+    return @"identity";
 }
 
 
