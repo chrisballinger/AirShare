@@ -45,6 +45,7 @@ static NSString * const kCachedLocalPeerKey = @"kCachedLocalPeerKey";
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:peerBrowser];
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.rootViewController = nav;
+    [self.window makeKeyAndVisible];
     return YES;
 }
 
