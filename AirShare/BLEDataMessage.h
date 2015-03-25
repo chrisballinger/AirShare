@@ -11,9 +11,13 @@
 @interface BLEDataMessage : BLESessionMessage
 
 @property (nonatomic, strong) NSData *data;
+@property (nonatomic, strong) NSDictionary *extraHeaders;
 
-- (instancetype) initWithData:(NSData*)data;
+/** extraHeaders must be JSON compatible */
+- (instancetype) initWithData:(NSData*)data extraHeaders:(NSDictionary*)extraHeaders;
 
 - (BOOL) verifyHash;
 
 @end
+
+extern NSString * const kBLEFileTransferMessageHeaderExtraKey;

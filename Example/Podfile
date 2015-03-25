@@ -1,10 +1,13 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
+use_frameworks!
+
 target 'AirShareTests', :exclusive => true do
   pod "AirShare/UIKit", :path => "../"
 end
 
 target 'AirShareDemo', :exclusive => true do
+  pod 'PureLayout'
   pod "AirShare/UIKit", :path => "../"
 end
 

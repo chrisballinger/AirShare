@@ -18,6 +18,7 @@ PODS:
 
 DEPENDENCIES:
   - AirShare/UIKit (from `../`)
+  - PureLayout
 
 EXTERNAL SOURCES:
   AirShare:

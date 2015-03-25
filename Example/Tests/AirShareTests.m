@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
-#import "BLEDataMessage.h"
-#import "BLESessionMessageReceiver.h"
-#import "BLEIdentityMessage.h"
-#import "BLEFileTransferMessage.h"
-#import "BLECrypto.h"
+#import <AirShare/BLEDataMessage.h>
+#import <AirShare/BLEDataMessage.h>
+#import <AirShare/BLESessionMessageReceiver.h>
+#import <AirShare/BLEIdentityMessage.h>
+#import <AirShare/BLEFileTransferMessage.h>
+#import <AirShare/BLECrypto.h>
 
 @interface AirShareTests : XCTestCase <BLESessionMessageReceiverDelegate>
 @property (nonatomic, strong) BLESessionMessageReceiver *receiver;
@@ -58,7 +59,8 @@
 - (void)testDataMessage {
     self.expectation = [self expectationWithDescription:@"Serialization Expectation"];
     NSData *testData = [self generateTestDataOfLength:16000];
-    BLEDataMessage *dataMessage = [[BLEDataMessage alloc] initWithData:testData];
+    NSDictionary *testHeaders = @{@"testKey": @"testValue"};
+    BLEDataMessage *dataMessage = [[BLEDataMessage alloc] initWithData:testData extraHeaders:testHeaders];
     self.outgoingDataMessage = dataMessage;
     [self sendDataAsChunks:self.outgoingDataMessage.serializedData chunkSize:155 toReceiver:self.receiver];
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
@@ -166,6 +168,8 @@
         NSData *outgoingData = outgoingDataMessage.data;
         BOOL equal = [incomingData isEqualToData:outgoingData];
         XCTAssertTrue(equal, @"data is different");
+        equal = [outgoingDataMessage.extraHeaders isEqualToDictionary:dataMessage.extraHeaders];
+        XCTAssertTrue(equal, @"headers are different");
         if (equal) {
             [self.expectation fulfill];
         }

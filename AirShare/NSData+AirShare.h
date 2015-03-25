@@ -11,5 +11,6 @@
 @interface NSData (AirShare)
 
 - (NSData*) ble_sha256;
+- (NSString*) ble_hexString;
 
 @end

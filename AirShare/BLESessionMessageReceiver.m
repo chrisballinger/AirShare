@@ -121,6 +121,10 @@
                         [self.delegate receiver:self transferComplete:dataMessage];
                     });
                 }
+            } else {
+                dispatch_async(self.callbackQueue, ^{
+                    [self.delegate receiver:self transferComplete:dataMessage];
+                });
             }
         } else if ([self.sessionMessage isKindOfClass:[BLEFileTransferMessage class]]) {
             if (data.length == 0) {

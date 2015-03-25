@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1514" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="iMC-ft-h25">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--Test View Controller-->
+        <scene sceneID="jow-Vl-Bom">
+            <objects>
+                <viewController id="iMC-ft-h25" customClass="BLETestViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="6EH-gE-GAb"/>
+                        <viewControllerLayoutGuide type="bottom" id="fKU-1M-vT6"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="zDa-sH-x1l">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Author" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8QM-r1-w7I">
+                                <rect key="frame" x="36" y="42" width="55" height="26"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="55" id="tMh-Pm-d1H"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quote" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BMD-VU-BtN">
+                                <rect key="frame" x="36" y="88" width="55" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4bv-S4-5YU">
+                                <rect key="frame" x="117" y="484" width="36" height="30"/>
+                                <state key="normal" title="Send">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendButtonPressed:" destination="iMC-ft-h25" eventType="touchUpInside" id="Isc-T9-09J"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1jj-Xz-06g">
+                                <rect key="frame" x="429" y="484" width="55" height="30"/>
+                                <state key="normal" title="Receive">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="receiveButtonPressed:" destination="iMC-ft-h25" eventType="touchUpInside" id="IZw-lO-LsP"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Carl Sagan" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="LnM-8n-ao5">
+                                <rect key="frame" x="111" y="40" width="453" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="If you wish to make an apple pie from scratch, you must first invent the universe." translatesAutoresizingMaskIntoConstraints="NO" id="dJK-cl-lUS">
+                                <rect key="frame" x="111" y="88" width="453" height="129"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="129" id="k2U-t6-CEP"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="LnM-8n-ao5" firstAttribute="leading" secondItem="8QM-r1-w7I" secondAttribute="trailing" constant="20" id="30L-ub-3G2"/>
+                            <constraint firstItem="dJK-cl-lUS" firstAttribute="trailing" secondItem="LnM-8n-ao5" secondAttribute="trailing" id="7os-pY-LlA"/>
+                            <constraint firstItem="LnM-8n-ao5" firstAttribute="top" secondItem="6EH-gE-GAb" secondAttribute="bottom" constant="20" id="A8c-FV-que"/>
+                            <constraint firstItem="BMD-VU-BtN" firstAttribute="top" secondItem="8QM-r1-w7I" secondAttribute="bottom" constant="20" id="EJL-AF-Pbl"/>
+                            <constraint firstItem="fKU-1M-vT6" firstAttribute="top" secondItem="1jj-Xz-06g" secondAttribute="bottom" constant="86" id="I4o-ki-bsU"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="1jj-Xz-06g" secondAttribute="trailing" constant="100" id="LO9-OI-8J1"/>
+                            <constraint firstItem="dJK-cl-lUS" firstAttribute="leading" secondItem="LnM-8n-ao5" secondAttribute="leading" id="Mab-kZ-Hgg"/>
+                            <constraint firstItem="4bv-S4-5YU" firstAttribute="leading" secondItem="zDa-sH-x1l" secondAttribute="leadingMargin" constant="101" id="Oi1-7b-MMl"/>
+                            <constraint firstItem="8QM-r1-w7I" firstAttribute="top" secondItem="6EH-gE-GAb" secondAttribute="bottom" constant="22" id="S8N-zC-Voy"/>
+                            <constraint firstItem="8QM-r1-w7I" firstAttribute="centerY" secondItem="LnM-8n-ao5" secondAttribute="centerY" id="VGE-Uf-ckU"/>
+                            <constraint firstItem="8QM-r1-w7I" firstAttribute="width" secondItem="BMD-VU-BtN" secondAttribute="width" id="XA2-VT-qqI"/>
+                            <constraint firstItem="8QM-r1-w7I" firstAttribute="leading" secondItem="zDa-sH-x1l" secondAttribute="leadingMargin" constant="20" id="k5f-Fc-hbO"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="LnM-8n-ao5" secondAttribute="trailing" constant="20" id="qcT-Yj-kzi"/>
+                            <constraint firstItem="dJK-cl-lUS" firstAttribute="top" secondItem="BMD-VU-BtN" secondAttribute="top" id="sMo-NY-6qQ"/>
+                            <constraint firstItem="fKU-1M-vT6" firstAttribute="top" secondItem="4bv-S4-5YU" secondAttribute="bottom" constant="86" id="y2O-4G-Gb4"/>
+                            <constraint firstItem="8QM-r1-w7I" firstAttribute="leading" secondItem="BMD-VU-BtN" secondAttribute="leading" id="zfK-DN-NCP"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="authorTextField" destination="LnM-8n-ao5" id="45j-Xk-2ic"/>
+                        <outlet property="quoteTextView" destination="dJK-cl-lUS" id="p6V-nM-4qu"/>
+                        <outlet property="receiveButton" destination="1jj-Xz-06g" id="WWF-Xx-zYz"/>
+                        <outlet property="sendButton" destination="4bv-S4-5YU" id="1eF-wD-LqJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="G0c-VQ-LE4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="37" y="304"/>
+        </scene>
+    </scenes>
+</document>

@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3699210C5D146D55D8AB874F /* libPods-AirShareTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9FDE77087785408CD64F5EE /* libPods-AirShareTests.a */; };
-		48A10383B2C7C3280B7DFC1D /* libPods-AirShareDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7343A773D1F9A979660CF64 /* libPods-AirShareDemo.a */; };
+		4F8BD9FD7BC157BFA892FF42 /* Pods_AirShareTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECC53F5D6417C6C393A79717 /* Pods_AirShareTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F5AF195388D20070C39A /* XCTest.framework */; };
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
+		8503C6F50072AFFDEB7BFC18 /* Pods_AirShareDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 267F359032BFEDDDD7B009A4 /* Pods_AirShareDemo.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		D9111E221A71BDA4004AFD08 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D9111E211A71BDA4004AFD08 /* libz.dylib */; };
 		D9111E2E1A71EA0B004AFD08 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9111E2D1A71EA0B004AFD08 /* MediaPlayer.framework */; };
 		D9914B8F1A96B55900D4066F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D9914B851A96B55900D4066F /* AppDelegate.m */; };
@@ -20,10 +20,13 @@
 		D9914B921A96B55900D4066F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9914B8A1A96B55900D4066F /* Images.xcassets */; };
 		D9914B941A96B55900D4066F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D9914B8C1A96B55900D4066F /* main.m */; };
 		D9C89F3C1A6F0624001C8ECA /* AirShareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D9C89F3B1A6F0624001C8ECA /* AirShareTests.m */; };
+		D9EBC30C1AC1FBB70054B796 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D9EBC30A1AC1FBB70054B796 /* Main.storyboard */; };
+		D9EBC30F1AC1FDD50054B796 /* BLETestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D9EBC30E1AC1FDD50054B796 /* BLETestViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2C2BB7FB2261469A4037DFDD /* Pods-AirShareTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirShareTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AirShareTests/Pods-AirShareTests.release.xcconfig"; sourceTree = "<group>"; };
+		267F359032BFEDDDD7B009A4 /* Pods_AirShareDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirShareDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A5354E72F39321087923E46 /* Pods-AirShareTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirShareTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AirShareTests/Pods-AirShareTests.debug.xcconfig"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* IOCipher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IOCipher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -33,10 +36,9 @@
 		6003F5B7195388D20070C39A /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
-		A9FDE77087785408CD64F5EE /* libPods-AirShareTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirShareTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B82E2171C2F523CAC644B6D0 /* Pods-AirShareTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirShareTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AirShareTests/Pods-AirShareTests.debug.xcconfig"; sourceTree = "<group>"; };
+		7228BBE30EBA90B81980554C /* Pods-AirShareDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirShareDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AirShareDemo/Pods-AirShareDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		ACC957C58DE7142B52D6EC30 /* Pods-AirShareDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirShareDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-AirShareDemo/Pods-AirShareDemo.release.xcconfig"; sourceTree = "<group>"; };
 		C8240088979CCA2033A1C9CB /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		CCCC008693BA3DC8232612A0 /* Pods-AirShareDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirShareDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AirShareDemo/Pods-AirShareDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		D9111DB51A71B9C1004AFD08 /* AirShareDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AirShareDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9111E211A71BDA4004AFD08 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		D9111E2D1A71EA0B004AFD08 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
@@ -48,8 +50,11 @@
 		D9914B8B1A96B55900D4066F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9914B8C1A96B55900D4066F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D9C89F3B1A6F0624001C8ECA /* AirShareTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirShareTests.m; sourceTree = "<group>"; };
-		E366AB8A60A9B645823AB185 /* Pods-AirShareDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirShareDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-AirShareDemo/Pods-AirShareDemo.release.xcconfig"; sourceTree = "<group>"; };
-		E7343A773D1F9A979660CF64 /* libPods-AirShareDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AirShareDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9EBC30B1AC1FBB70054B796 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D9EBC30D1AC1FDD50054B796 /* BLETestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLETestViewController.h; sourceTree = "<group>"; };
+		D9EBC30E1AC1FDD50054B796 /* BLETestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLETestViewController.m; sourceTree = "<group>"; };
+		E2A4D7A14300F461AB9DEF7D /* Pods-AirShareTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirShareTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AirShareTests/Pods-AirShareTests.release.xcconfig"; sourceTree = "<group>"; };
+		ECC53F5D6417C6C393A79717 /* Pods_AirShareTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirShareTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED48EF81DCE538EA97AB038E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -61,7 +66,7 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				3699210C5D146D55D8AB874F /* libPods-AirShareTests.a in Frameworks */,
+				4F8BD9FD7BC157BFA892FF42 /* Pods_AirShareTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +76,7 @@
 			files = (
 				D9111E2E1A71EA0B004AFD08 /* MediaPlayer.framework in Frameworks */,
 				D9111E221A71BDA4004AFD08 /* libz.dylib in Frameworks */,
-				48A10383B2C7C3280B7DFC1D /* libPods-AirShareDemo.a in Frameworks */,
+				8503C6F50072AFFDEB7BFC18 /* Pods_AirShareDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,7 +91,7 @@
 				6003F5B5195388D20070C39A /* Tests */,
 				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
-				CB17CD55569C9CF36BCEBED0 /* Pods */,
+				F75162F764ACCA614BA4D424 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,8 +114,8 @@
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
-				E7343A773D1F9A979660CF64 /* libPods-AirShareDemo.a */,
-				A9FDE77087785408CD64F5EE /* libPods-AirShareTests.a */,
+				267F359032BFEDDDD7B009A4 /* Pods_AirShareDemo.framework */,
+				ECC53F5D6417C6C393A79717 /* Pods_AirShareTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -144,20 +149,12 @@
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
-		CB17CD55569C9CF36BCEBED0 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				E366AB8A60A9B645823AB185 /* Pods-AirShareDemo.release.xcconfig */,
-				CCCC008693BA3DC8232612A0 /* Pods-AirShareDemo.debug.xcconfig */,
-				2C2BB7FB2261469A4037DFDD /* Pods-AirShareTests.release.xcconfig */,
-				B82E2171C2F523CAC644B6D0 /* Pods-AirShareTests.debug.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		D9914B831A96B55900D4066F /* AirShareDemo */ = {
 			isa = PBXGroup;
 			children = (
+				D9EBC30A1AC1FBB70054B796 /* Main.storyboard */,
+				D9EBC30D1AC1FDD50054B796 /* BLETestViewController.h */,
+				D9EBC30E1AC1FDD50054B796 /* BLETestViewController.m */,
 				D9914B841A96B55900D4066F /* AppDelegate.h */,
 				D9914B851A96B55900D4066F /* AppDelegate.m */,
 				D9914B861A96B55900D4066F /* LaunchScreen.xib */,
@@ -167,6 +164,17 @@
 			);
 			path = AirShareDemo;
 			sourceTree = SOURCE_ROOT;
+		};
+		F75162F764ACCA614BA4D424 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				ACC957C58DE7142B52D6EC30 /* Pods-AirShareDemo.release.xcconfig */,
+				7228BBE30EBA90B81980554C /* Pods-AirShareDemo.debug.xcconfig */,
+				E2A4D7A14300F461AB9DEF7D /* Pods-AirShareTests.release.xcconfig */,
+				4A5354E72F39321087923E46 /* Pods-AirShareTests.debug.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -180,6 +188,7 @@
 				6003F5AB195388D20070C39A /* Frameworks */,
 				6003F5AC195388D20070C39A /* Resources */,
 				BD2C90F05A6F7AA001CFB651 /* Copy Pods Resources */,
+				98D0E4E2C92F9913ED51CAFD /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -199,6 +208,7 @@
 				D9111DB21A71B9C1004AFD08 /* Frameworks */,
 				D9111DB31A71B9C1004AFD08 /* Resources */,
 				E754D09D31589E1C53DC9C30 /* Copy Pods Resources */,
+				CAF2FF6B1314258AB21FF568 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -259,6 +269,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9EBC30C1AC1FBB70054B796 /* Main.storyboard in Resources */,
 				D9914B921A96B55900D4066F /* Images.xcassets in Resources */,
 				D9914B901A96B55900D4066F /* LaunchScreen.xib in Resources */,
 			);
@@ -280,6 +291,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		98D0E4E2C92F9913ED51CAFD /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AirShareTests/Pods-AirShareTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BD2C90F05A6F7AA001CFB651 /* Copy Pods Resources */ = {
@@ -312,6 +338,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		CAF2FF6B1314258AB21FF568 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AirShareDemo/Pods-AirShareDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		E754D09D31589E1C53DC9C30 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -342,6 +383,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9EBC30F1AC1FDD50054B796 /* BLETestViewController.m in Sources */,
 				D9914B941A96B55900D4066F /* main.m in Sources */,
 				D9914B8F1A96B55900D4066F /* AppDelegate.m in Sources */,
 			);
@@ -364,6 +406,14 @@
 				D9914B871A96B55900D4066F /* Base */,
 			);
 			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		D9EBC30A1AC1FBB70054B796 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D9EBC30B1AC1FBB70054B796 /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -395,7 +445,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -404,7 +454,7 @@
 		};
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C2BB7FB2261469A4037DFDD /* Pods-AirShareTests.release.xcconfig */;
+			baseConfigurationReference = E2A4D7A14300F461AB9DEF7D /* Pods-AirShareTests.release.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -426,7 +476,7 @@
 		};
 		D9111DD61A71B9C2004AFD08 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E366AB8A60A9B645823AB185 /* Pods-AirShareDemo.release.xcconfig */;
+			baseConfigurationReference = ACC957C58DE7142B52D6EC30 /* Pods-AirShareDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -466,7 +516,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -476,7 +526,7 @@
 		};
 		D964F2A61A83EE5600CFF26D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B82E2171C2F523CAC644B6D0 /* Pods-AirShareTests.debug.xcconfig */;
+			baseConfigurationReference = 4A5354E72F39321087923E46 /* Pods-AirShareTests.debug.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -499,7 +549,7 @@
 		};
 		D964F2A71A83EE5600CFF26D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CCCC008693BA3DC8232612A0 /* Pods-AirShareDemo.debug.xcconfig */;
+			baseConfigurationReference = 7228BBE30EBA90B81980554C /* Pods-AirShareDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_UNREACHABLE_CODE = YES;

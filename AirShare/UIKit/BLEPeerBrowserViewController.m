@@ -16,7 +16,7 @@
 @property (nonatomic, strong) NSMutableOrderedSet *peers;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic) BOOL hasUpdatedConstraints;
-@property (nonatomic, strong) BLEFileTransferMessage *outgoingTransfer;
+@property (nonatomic, strong) BLEDataMessage *outgoingTransfer;
 @end
 
 @implementation BLEPeerBrowserViewController
@@ -33,6 +33,8 @@
 - (instancetype) init {
     if (self = [super init]) {
         self.title = NSLocalizedString(@"Peer Browser", @"title for peer browser");
+        self.mode = BLEPeerBrowserModeReceive;
+        self.delegateQueue = dispatch_get_main_queue();
     }
     return self;
 }
@@ -44,6 +46,10 @@
     }
     [self.tableView autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero];
     self.hasUpdatedConstraints = YES;
+}
+
+- (void) addOutgoingData:(NSData*)data headers:(NSDictionary*)headers {
+    self.outgoingTransfer = [[BLEDataMessage alloc] initWithData:data extraHeaders:headers];
 }
 
 - (void) setupTableView {
@@ -59,7 +65,7 @@
     [super viewDidLoad];
     self.peers = [NSMutableOrderedSet orderedSet];
     [self setupTableView];
-    //[self setupDoneButton];
+    [self setupDoneButton];
     //[self setupBroadcastButton];
     [self updateViewConstraints];
 }
@@ -68,7 +74,12 @@
     [super viewWillAppear:animated];
     NSArray *peers = [self.sessionManager discoveredPeers];
     [self.peers addObjectsFromArray:peers];
-    [self.sessionManager scanForPeers];
+    
+    if (self.mode == BLEPeerBrowserModeSend) {
+        [self.sessionManager scanForPeers];
+    } else if (self.mode == BLEPeerBrowserModeReceive) {
+        [self.sessionManager advertiseLocalPeer];
+    }
 }
 
 - (void) setupDoneButton {
@@ -144,6 +155,11 @@
         if (fileTransfer.transferType == BLEFileTransferMessageTypeTransfer) {
             NSLog(@"incoming file complete: %@", fileTransfer.fileURL);
         }
+    } else if ([message isKindOfClass:[BLEDataMessage class]]) {
+        dispatch_async(self.delegateQueue, ^{
+            BLEDataMessage *dataMessage = (BLEDataMessage*)message;
+            [self.delegate peerBrowser:self dataReceived:dataMessage.data headers:dataMessage.extraHeaders];
+        });
     }
 }
 
@@ -172,16 +188,7 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     BLERemotePeer *peer = [self.peers objectAtIndex:indexPath.row];
-    NSData *testData = [self generateTestDataOfLength:16000];
-    /*
-    NSString *tempDirectory = NSTemporaryDirectory();
-    NSString *testPath = [tempDirectory stringByAppendingPathComponent:@"test.file"];
-    BOOL success = [testData writeToFile:testPath atomically:YES];
-    NSParameterAssert(success);
-    BLEFileTransferMessage *fileTransfer = [[BLEFileTransferMessage alloc] initWithFileURL:[NSURL fileURLWithPath:testPath] transferType:BLEFileTransferMessageTypeOffer];
-     */
-    BLEDataMessage *dataMessage = [[BLEDataMessage alloc] initWithData:testData];
-    [self.sessionManager sendSessionMessage:dataMessage toPeer:peer];
+    [self.sessionManager sendSessionMessage:self.outgoingTransfer toPeer:peer];
 }
 
 @end

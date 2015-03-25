@@ -7,10 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "BLECrypto.h"
-#import "BLEPeerBrowserViewController.h"
-
-static NSString * const kCachedLocalPeerKey = @"kCachedLocalPeerKey";
 
 
 @interface AppDelegate ()
@@ -22,29 +18,6 @@ static NSString * const kCachedLocalPeerKey = @"kCachedLocalPeerKey";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    
-    NSData *localPeerData = [[NSUserDefaults standardUserDefaults] objectForKey:kCachedLocalPeerKey];
-    BLELocalPeer *localPeer = nil;
-    if (!localPeerData) {
-        BLEKeyPair *keyPair = [BLEKeyPair keyPairWithType:BLEKeyTypeEd25519];
-        localPeer = [[BLELocalPeer alloc] initWithPublicKey:keyPair.publicKey privateKey:keyPair.privateKey];
-        NSData *peerData = [NSKeyedArchiver archivedDataWithRootObject:localPeer];
-        [[NSUserDefaults standardUserDefaults] setObject:peerData forKey:kCachedLocalPeerKey];
-    } else {
-        localPeer = [NSKeyedUnarchiver unarchiveObjectWithData:localPeerData];
-        NSParameterAssert(localPeer != nil);
-    }
-    self.sessionManager = [[BLESessionManager alloc] initWithLocalPeer:localPeer delegate:nil];
-    [self.sessionManager advertiseLocalPeer];
-    [self.sessionManager scanForPeers];
-    
-    UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
-    [application registerUserNotificationSettings:notificationSettings];
-    
-    BLEPeerBrowserViewController *peerBrowser = [[BLEPeerBrowserViewController alloc] initWithSessionManager:self.sessionManager];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:peerBrowser];
-    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.rootViewController = nav;
     return YES;
 }
 

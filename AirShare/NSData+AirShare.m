@@ -16,9 +16,24 @@
     if (!hashBytes) {
         return nil;
     }
-    CC_SHA256([self bytes], [self length], hashBytes);
+    CC_SHA256([self bytes], (CC_LONG)[self length], hashBytes);
     NSData *sha256 = [NSData dataWithBytesNoCopy:hashBytes length:CC_SHA256_DIGEST_LENGTH freeWhenDone:YES];
     return sha256;
+}
+
+- (NSString *)ble_hexString
+{
+    NSMutableString *stringBuffer = [NSMutableString stringWithCapacity:([self length] * 2)];
+    
+    const unsigned char *dataBuffer = [self bytes];
+    int i;
+    
+    for (i = 0; i < [self length]; ++i)
+    {
+        [stringBuffer appendFormat:@"%02x", (unsigned int)dataBuffer[i]];
+    }
+    
+    return [stringBuffer copy];
 }
 
 @end
