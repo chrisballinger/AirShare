@@ -42,7 +42,7 @@
 }
 
 - (void) registerTransports {
-    BLEBluetoothTransport *transport = [[BLEBluetoothTransport alloc] initWithServiceName:@"AirShare" delegate:self supportsBackground:NO];
+    BLEBluetoothTransport *transport = [[BLEBluetoothTransport alloc] initWithServiceName:@"AirShareDemo" delegate:self supportsBackground:NO];
     [self.transports addObject:transport];
 }
 

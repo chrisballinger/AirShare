@@ -9,6 +9,7 @@
 #import "BLEBluetoothTransport.h"
 #import "BLECentral.h"
 #import "BLEPeripheral.h"
+#import "NSData+AirShare.h"
 
 @implementation BLEBluetoothTransport
 
@@ -16,11 +17,25 @@
     if (self = [super initWithServiceName:serviceName delegate:delegate]) {
         _supportsBackground = supportsBackground;
         CBUUID *characteristicUUID = [CBUUID UUIDWithString:@"72A7700C-859D-4317-9E35-D7F5A93005B1"];
-        CBUUID *serviceUUID = [CBUUID UUIDWithString:@"B491602C-C912-47AE-B639-9C17A4AADB06"];
+        CBUUID *serviceUUID = [self uuidFromServiceName:serviceName];
         _central = [[BLECentral alloc] initWithDelegate:self serviceUUID:serviceUUID characteristicUUID:characteristicUUID supportsBackground:supportsBackground];
         _peripheral = [[BLEPeripheral alloc] initWithDelegate:self serviceUUID:serviceUUID characteristicUUID:characteristicUUID supportsBackground:supportsBackground];
     }
     return self;
+}
+
+- (CBUUID*) uuidFromServiceName:(NSString*)serviceName {
+    NSData *sha256 = [[serviceName dataUsingEncoding:NSUTF8StringEncoding] ble_sha256];
+    NSString *hexString = [sha256 ble_hexString];
+    hexString = [hexString uppercaseString];
+    NSMutableString *uuidString = [[NSMutableString alloc] init];
+    [uuidString appendString:[hexString substringToIndex:32]];
+    [uuidString insertString:@"-" atIndex:8];
+    [uuidString insertString:@"-" atIndex:13];
+    [uuidString insertString:@"-" atIndex:18];
+    [uuidString insertString:@"-" atIndex:23];
+    CBUUID *uuid = [CBUUID UUIDWithString:uuidString];
+    return uuid;
 }
 
 - (instancetype) initWithServiceName:(NSString *)serviceName delegate:(id<BLETransportDelegate>)delegate {
