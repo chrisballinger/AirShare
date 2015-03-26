@@ -114,17 +114,25 @@
          extraInfo:(NSDictionary*)extraInfo {
     NSLog(@"identifierUpdated: %@ %d %@", identifier, (int)connectionStatus, extraInfo);
     BLERemotePeer *peer = [self peerForIdentifier:identifier];
-    if (!peer) {
-        BOOL identifierUndergoingPeerDiscovery = [self.identifiersUndergoingPeerDiscovery containsObject:identifier];
-        if (!identifierUndergoingPeerDiscovery) {
-            if (connectionStatus == BLEConnectionStatusConnected) {
-                [self.identifiersUndergoingPeerDiscovery addObject:identifier];
-                NSError *error = nil;
-                BLEIdentityMessage *identityMessage = [[BLEIdentityMessage alloc] initWithPeer:self.localPeer];
-                [transport sendData:identityMessage.serializedData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
-            }
-        }
-    } else {
+    
+    if (connectionStatus == BLEConnectionStatusConnected) {
+        
+        NSError *error = nil;
+        // We shouldn't mark this peer as undergoing discovery until the identity message is acknowledged
+        // However, we don't monitor dataSenttoIdentifer yet.
+        [self.identifiersUndergoingPeerDiscovery addObject:identifier];
+        BLEIdentityMessage *identityMessage = [[BLEIdentityMessage alloc] initWithPeer:self.localPeer];
+        [transport sendData:identityMessage.serializedData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
+        
+    } else if (connectionStatus == BLEConnectionStatusDisconnected) {
+        
+        [self.offeredTransfers removeObjectForKey:identifier];
+        [self.receiverForIdentifier removeObjectForKey:identifier];
+        [self.identifiersUndergoingPeerDiscovery removeObject:identifier];
+        [self.identifiersToPeers removeObjectForKey:identifier];
+    }
+    
+    if (peer) {
         NSNumber *RSSI = [extraInfo objectForKey:@"RSSI"];
         peer.RSSI = RSSI;
         peer.lastSeenDate = [NSDate date];
@@ -182,6 +190,8 @@
             NSData *data = identityMessage.serializedData;
             [transport sendData:data toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
             NSLog(@"peer discovered for identifier: %@ %@", peer, identifier);
+        } else {
+            NSLog(@"Got identity from identifier (%@) already identified!", identifier);
         }
         peer.lastSeenDate = [NSDate date];
         dispatch_async(self.delegateQueue, ^{
