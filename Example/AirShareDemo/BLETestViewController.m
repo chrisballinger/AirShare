@@ -13,7 +13,7 @@
 static NSString * const kCachedLocalPeerKey = @"kCachedLocalPeerKey";
 
 
-@interface BLETestViewController ()
+@interface BLETestViewController () <BLEPeerBrowserDelegate>
 @property (nonatomic, strong) BLESessionManager *sessionManager;
 @end
 
@@ -63,6 +63,7 @@ static NSString * const kCachedLocalPeerKey = @"kCachedLocalPeerKey";
 
 - (IBAction)sendButtonPressed:(id)sender {
     BLEPeerBrowserViewController *peerBrowser = [[BLEPeerBrowserViewController alloc] initWithSessionManager:self.sessionManager];
+    peerBrowser.delegate = self;
     peerBrowser.mode = BLEPeerBrowserModeSend;
     NSDictionary *outgoingHeaders = @{@"author": self.authorTextField.text,
                                       @"quote": self.quoteTextView.text};
@@ -73,6 +74,7 @@ static NSString * const kCachedLocalPeerKey = @"kCachedLocalPeerKey";
 
 - (IBAction)receiveButtonPressed:(id)sender {
     BLEPeerBrowserViewController *peerBrowser = [[BLEPeerBrowserViewController alloc] initWithSessionManager:self.sessionManager];
+    peerBrowser.delegate = self;
     peerBrowser.mode = BLEPeerBrowserModeReceive;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:peerBrowser];
     [self presentViewController:nav animated:YES completion:nil];
@@ -93,5 +95,21 @@ static NSString * const kCachedLocalPeerKey = @"kCachedLocalPeerKey";
     return YES;
 }
 
+#pragma mark BLEPeerBrowserDelegate
+
+- (void) peerBrowser:(BLEPeerBrowserViewController*)peerBrowser
+        dataReceived:(NSData*)data
+             headers:(NSDictionary*)headers {
+    NSString *title = headers[@"author"];
+    NSString *message = headers[@"quote"];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+}
+
+- (void) peerBrowser:(BLEPeerBrowserViewController*)peerBrowser
+            dataSent:(NSData*)data
+             headers:(NSDictionary*)headers {
+    
+}
 
 @end
