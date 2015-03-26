@@ -193,8 +193,10 @@
 #pragma mark UITableViewDelegate
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    BLERemotePeer *peer = [self.peers objectAtIndex:indexPath.row];
-    [self.sessionManager sendSessionMessage:self.outgoingTransfer toPeer:peer];
+    if (self.mode == BLEPeerBrowserModeSend && self.outgoingTransfer) {
+        BLERemotePeer *peer = [self.peers objectAtIndex:indexPath.row];
+        [self.sessionManager sendSessionMessage:self.outgoingTransfer toPeer:peer];
+    }
 }
 
 @end
