@@ -129,11 +129,17 @@
         }
         return NO;
     }];
-    if (index == NSNotFound) {
-        [self.peers addObject:peer];
-    } else {
-        [self.peers replaceObjectAtIndex:index withObject:peer];
+    
+    if (status == BLEConnectionStatusConnected) {
+        if (index == NSNotFound) {
+            [self.peers addObject:peer];
+        } else {
+            [self.peers replaceObjectAtIndex:index withObject:peer];
+        }
+    } else if (status == BLEConnectionStatusDisconnected) {
+        [self.peers removeObject:peer];
     }
+    
     [self.peers sortUsingComparator:^NSComparisonResult(BLERemotePeer *peer1, BLERemotePeer *peer2) {
         NSComparisonResult result = NSOrderedSame;
         if (peer1.RSSI && peer2.RSSI) {
