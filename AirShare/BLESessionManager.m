@@ -182,6 +182,7 @@
         BLERemotePeer *peer = [self peerForIdentifier:identifier];
         if (!peer) {
             peer = [[BLERemotePeer alloc] initWithPublicKey:identityMessage.publicKey];
+            peer.alias = identityMessage.alias;
             [peer.identifiers addObject:identifier];
             [self setPeer:peer forIndentifier:identifier];
             BLEIdentityMessage *identityMessage = [[BLEIdentityMessage alloc] initWithPeer:self.localPeer];

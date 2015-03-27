@@ -38,6 +38,7 @@ static NSString * const kCachedLocalPeerKey = @"kCachedLocalPeerKey";
         localPeer = [NSKeyedUnarchiver unarchiveObjectWithData:localPeerData];
         NSParameterAssert(localPeer != nil);
     }
+    localPeer.alias = @"iPhone";
     self.sessionManager = [[BLESessionManager alloc] initWithLocalPeer:localPeer delegate:nil];
     
     UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];

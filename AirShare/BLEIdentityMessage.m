@@ -22,6 +22,7 @@ NSString * const kBLEIdentityMessageHeaderAliasKey = @"alias";
     if (self = [super init]) {
         NSParameterAssert(peer.publicKey != nil);
         _publicKey = peer.publicKey;
+        _alias = peer.alias;
     }
     return self;
 }
@@ -47,6 +48,9 @@ NSString * const kBLEIdentityMessageHeaderAliasKey = @"alias";
     if (publicKeyString) {
         [headers setObject:publicKeyString forKey:kBLEIdentityMessageHeaderPublicKey];
     }
+    if (self.alias.length) {
+        [headers setObject:self.alias forKey:kBLEIdentityMessageHeaderAliasKey];
+    }
     return headers;
 }
 
@@ -55,6 +59,7 @@ NSString * const kBLEIdentityMessageHeaderAliasKey = @"alias";
     NSString *publicKeyString = [headers objectForKey:kBLEIdentityMessageHeaderPublicKey];
     self.publicKey = [[NSData alloc] initWithBase64EncodedString:publicKeyString options:NSDataBase64DecodingIgnoreUnknownCharacters];
     NSParameterAssert(self.publicKey != nil);
+    self.alias = [headers objectForKey:kBLEIdentityMessageHeaderAliasKey];
 }
 
 + (NSString*) type {

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BLEPeer.h"
+#import "BLERemotePeer.h"
 
 @interface BLEPeerTableViewCell : UITableViewCell
 
@@ -15,7 +15,7 @@
 @property (nonatomic, strong, readonly) UILabel *lastSeenDateLabel;
 @property (nonatomic, strong, readonly) UILabel *RSSILabel;
 
-- (void) setPeer:(BLEPeer*)peer;
+- (void) setPeer:(BLERemotePeer*)peer;
 
 + (NSString*) cellIdentifier;
 

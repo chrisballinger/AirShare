@@ -67,8 +67,10 @@
     // Configure the view for the selected state
 }
 
-- (void) setPeer:(BLEPeer*)peer {
-    self.displayNameLabel.text = [peer.publicKey description];
+- (void) setPeer:(BLERemotePeer*)peer {
+    self.displayNameLabel.text = peer.alias;
+    //self.lastSeenDateLabel.text = peer.lastSeenDate.description;
+    //self.RSSILabel.text = peer.RSSI.description;
 }
 
 + (NSString*) cellIdentifier {
