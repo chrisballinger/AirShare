@@ -20,20 +20,6 @@
                ReferencedContainer = "container:AirShare.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D9111DCC1A71B9C2004AFD08"
-               BuildableName = "IOCipherServerTests.xctest"
-               BlueprintName = "IOCipherServerTests"
-               ReferencedContainer = "container:AirShare.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -42,16 +28,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D9111DCC1A71B9C2004AFD08"
-               BuildableName = "IOCipherServerTests.xctest"
-               BlueprintName = "IOCipherServerTests"
-               ReferencedContainer = "container:AirShare.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

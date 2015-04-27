@@ -10,7 +10,6 @@
 #import "BLEPeerTableViewCell.h"
 #import "PureLayout.h"
 #import "BLEDataMessage.h"
-#import "BLEFileTransferMessage.h"
 
 @interface BLEPeerBrowserViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSMutableOrderedSet *peers;
@@ -152,16 +151,7 @@
 
 - (void) sessionManager:(BLESessionManager *)sessionManager receivedMessage:(BLESessionMessage *)message fromPeer:(BLERemotePeer *)peer {
     NSLog(@"received message from peer: %@ %@", message, peer);
-    if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
-        BLEFileTransferMessage *fileTransfer = (BLEFileTransferMessage*)message;
-        if (fileTransfer.transferType == BLEFileTransferMessageTypeOffer) {
-            fileTransfer.transferType = BLEFileTransferMessageTypeAccept;
-            [self.sessionManager sendSessionMessage:fileTransfer toPeer:peer];
-        }
-        if (fileTransfer.transferType == BLEFileTransferMessageTypeTransfer) {
-            NSLog(@"incoming file complete: %@", fileTransfer.fileURL);
-        }
-    } else if ([message isKindOfClass:[BLEDataMessage class]]) {
+    if ([message isKindOfClass:[BLEDataMessage class]]) {
         dispatch_async(self.delegateQueue, ^{
             BLEDataMessage *dataMessage = (BLEDataMessage*)message;
             [self.delegate peerBrowser:self dataReceived:dataMessage.data headers:dataMessage.extraHeaders];

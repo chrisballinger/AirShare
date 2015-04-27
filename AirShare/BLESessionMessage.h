@@ -40,10 +40,6 @@
 - (NSData*) serializedPrefixAndHeaderData;
 - (void) clearSerializationCache;
 
-/** Just payload */
-- (NSData*) payloadDataAtOffset:(NSUInteger)offset length:(NSUInteger)length;
-/** Full packet (includes prefix, header & payload) */
-- (NSData*) serializedDataAtOffset:(NSUInteger)offset length:(NSUInteger)length;
 
 /** serializes full message (only works if payload fits in memory) */
 - (NSData*) serializedData;

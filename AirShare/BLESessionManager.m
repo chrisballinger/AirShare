@@ -11,7 +11,6 @@
 #import "BLEIdentityMessage.h"
 #import "BLEBluetoothTransport.h"
 #import "BLEDataMessage.h"
-#import "BLEFileTransferMessage.h"
 
 @interface BLESessionManager() <BLESessionMessageReceiverDelegate>
 @property (nonatomic, strong, readonly) NSMutableSet *transports;
@@ -21,8 +20,6 @@
 @property (nonatomic, strong, readonly) NSMutableSet *identifiersUndergoingPeerDiscovery;
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *receiverForIdentifier;
-
-@property (nonatomic, strong, readonly) NSMutableDictionary *offeredTransfers;
 @end
 
 @implementation BLESessionManager
@@ -35,7 +32,6 @@
         _identifiersToPeers = [NSMutableDictionary dictionary];
         _identifiersUndergoingPeerDiscovery = [NSMutableSet set];
         _receiverForIdentifier = [NSMutableDictionary dictionary];
-        _offeredTransfers = [NSMutableDictionary dictionary];
         [self registerTransports];
     }
     return self;
@@ -76,9 +72,6 @@
 
 - (void) sendSessionMessage:(BLESessionMessage*)sessionMessage
                      toPeer:(BLERemotePeer*)peer {
-    if ([sessionMessage isKindOfClass:[BLEFileTransferMessage class]]) {
-        [self.offeredTransfers setObject:sessionMessage forKey:sessionMessage.identifer];
-    }
     NSString *identifier = [peer.identifiers anyObject];
     BLETransport *transport = [self preferredTransportForPeer:peer];
     NSData *data = sessionMessage.serializedData;
@@ -125,8 +118,6 @@
         [transport sendData:identityMessage.serializedData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
         
     } else if (connectionStatus == BLEConnectionStatusDisconnected) {
-        
-        [self.offeredTransfers removeObjectForKey:identifier];
         [self.receiverForIdentifier removeObjectForKey:identifier];
         [self.identifiersUndergoingPeerDiscovery removeObject:identifier];
         [self.identifiersToPeers removeObjectForKey:identifier];
@@ -151,8 +142,6 @@
     if ([message isKindOfClass:[BLEDataMessage class]]) {
     } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
     
-    } else if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
-        
     }
 }
 
@@ -163,8 +152,6 @@
     NSLog(@"progress: %f", progress);
     if ([message isKindOfClass:[BLEDataMessage class]]) {
     } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
-    } else if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
-        
     }
 }
 
@@ -198,23 +185,7 @@
         dispatch_async(self.delegateQueue, ^{
             [self.delegate sessionManager:self peer:peer statusUpdated:BLEConnectionStatusConnected];
         });
-    } else if ([message isKindOfClass:[BLEFileTransferMessage class]]) {
-        BLEFileTransferMessage *fileTransfer = (BLEFileTransferMessage*)message;
-        if (fileTransfer.transferType == BLEFileTransferMessageTypeAccept) {
-            // start sending file
-            BLEFileTransferMessage *outgoingTransfer = [self.offeredTransfers objectForKey:fileTransfer.identifer];
-            outgoingTransfer.transferType = BLEFileTransferMessageTypeTransfer;
-            [outgoingTransfer clearSerializationCache];
-            NSString *identifier = receiver.context;
-            NSData *serializedPrefixAndHeaderData = outgoingTransfer.serializedPrefixAndHeaderData;
-            BLERemotePeer *peer = [self peerForIdentifier:identifier];
-            BLETransport *transport = [self preferredTransportForPeer:peer];
-            [transport sendData:serializedPrefixAndHeaderData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:nil];
-            NSData *fileData = [NSData dataWithContentsOfURL:outgoingTransfer.fileURL];
-            [transport sendData:fileData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:nil];
-        }
     }
-    
     BLERemotePeer *peer = [self peerForIdentifier:identifier];
     dispatch_async(self.delegateQueue, ^{
         [self.delegate sessionManager:self receivedMessage:message fromPeer:peer];

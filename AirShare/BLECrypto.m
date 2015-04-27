@@ -9,10 +9,20 @@
 #import "BLECrypto.h"
 #import <sodium.h>
 
+static void initializeLibsodium() {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (sodium_init() == -1) {
+            @throw [NSException exceptionWithName:@"BLESodiumException" reason:@"sodium_init failed!" userInfo:nil];
+        }
+    });
+}
+
 const NSUInteger kBLECryptoEd25519PublicKeyLength = crypto_sign_ed25519_PUBLICKEYBYTES; // 32 bytes
 const NSUInteger kBLECryptoEd25519PrivateKeyLength = crypto_sign_ed25519_SECRETKEYBYTES; // 64 bytes
 const NSUInteger kBLECryptoEd25519SignatureLength = crypto_sign_ed25519_BYTES; // 64 bytes
-const NSUInteger kBLECryptoCurve25519KeyLength = crypto_scalarmult_curve25519_BYTES; // 32 bytes
+const NSUInteger kBLECryptoCurve25519PublicKeyLength = crypto_box_PUBLICKEYBYTES; // 32 bytes
+const NSUInteger kBLECryptoCurve25519PrivateKeyLength = crypto_box_SECRETKEYBYTES;
 
 @interface BLEKeyPair()
 @property (nonatomic, strong, readwrite) NSData *publicKey;
@@ -20,6 +30,11 @@ const NSUInteger kBLECryptoCurve25519KeyLength = crypto_scalarmult_curve25519_BY
 @property (nonatomic, readwrite) BLEKeyType type;
 @end
 @implementation BLEKeyPair
+
++ (void)initialize {
+    initializeLibsodium();
+}
+
 - (instancetype) initWithPublicKey:(NSData*)publicKey
                         privateKey:(NSData*)privateKey
                               type:(BLEKeyType)type {
@@ -34,33 +49,39 @@ const NSUInteger kBLECryptoCurve25519KeyLength = crypto_scalarmult_curve25519_BY
 }
 + (instancetype) keyPairWithType:(BLEKeyType)type {
     NSAssert(type == BLEKeyTypeEd25519, @"Only BLEKeyTypeEd25519 is supported right now");
-    if (type != BLEKeyTypeEd25519) {
-        return nil;
+    BLEKeyPair *keyPair = nil;
+    if (type == BLEKeyTypeEd25519) {
+        // Can we use sodium_malloc for privateKeyBytes?
+        uint8_t *publicKeyBytes = malloc(sizeof(uint8_t) * kBLECryptoEd25519PublicKeyLength);
+        uint8_t *privateKeyBytes = malloc(sizeof(uint8_t) * kBLECryptoEd25519PrivateKeyLength);
+        crypto_sign_keypair(publicKeyBytes, privateKeyBytes);
+        NSData *publicKeyData = [NSData dataWithBytesNoCopy:publicKeyBytes length:kBLECryptoEd25519PublicKeyLength freeWhenDone:YES];
+        NSData *privateKeyData = [NSData dataWithBytesNoCopy:privateKeyBytes length:kBLECryptoEd25519PrivateKeyLength freeWhenDone:YES];
+        keyPair = [[BLEKeyPair alloc] initWithPublicKey:publicKeyData privateKey:privateKeyData type:BLEKeyTypeEd25519];
+        keyPair.publicKey = publicKeyData;
+        keyPair.privateKey = privateKeyData;
+        keyPair.type = BLEKeyTypeEd25519;
+    } else if (type == BLEKeyTypeCurve25519) {
+        // Can we use sodium_malloc for privateKeyBytes?
+        uint8_t *publicKeyBytes = malloc(sizeof(uint8_t) * kBLECryptoCurve25519PublicKeyLength);
+        uint8_t *privateKeyBytes = malloc(sizeof(uint8_t) * kBLECryptoCurve25519PrivateKeyLength);
+        crypto_box_keypair(publicKeyBytes, privateKeyBytes);
+        NSData *publicKeyData = [NSData dataWithBytesNoCopy:publicKeyBytes length:kBLECryptoCurve25519PublicKeyLength freeWhenDone:YES];
+        NSData *privateKeyData = [NSData dataWithBytesNoCopy:privateKeyBytes length:kBLECryptoCurve25519PrivateKeyLength freeWhenDone:YES];
+        keyPair = [[BLEKeyPair alloc] initWithPublicKey:publicKeyData privateKey:privateKeyData type:BLEKeyTypeCurve25519];
+        keyPair.publicKey = publicKeyData;
+        keyPair.privateKey = privateKeyData;
+        keyPair.type = BLEKeyTypeCurve25519;
     }
-    // Can we use sodium_malloc for privateKeyBytes?
-    uint8_t *publicKeyBytes = malloc(sizeof(uint8_t) * kBLECryptoEd25519PublicKeyLength);
-    uint8_t *privateKeyBytes = malloc(sizeof(uint8_t) * kBLECryptoEd25519PrivateKeyLength);
-    crypto_sign_keypair(publicKeyBytes, privateKeyBytes);
-    NSData *publicKeyData = [NSData dataWithBytesNoCopy:publicKeyBytes length:kBLECryptoEd25519PublicKeyLength freeWhenDone:YES];
-    NSData *privateKeyData = [NSData dataWithBytesNoCopy:privateKeyBytes length:kBLECryptoEd25519PrivateKeyLength freeWhenDone:YES];
-    BLEKeyPair *keyPair = [[BLEKeyPair alloc] initWithPublicKey:publicKeyData privateKey:privateKeyData type:BLEKeyTypeEd25519];
-    keyPair.publicKey = publicKeyData;
-    keyPair.privateKey = privateKeyData;
-    keyPair.type = BLEKeyTypeEd25519;
+    
     return keyPair;
 }
 @end
 
 @implementation BLECrypto
 
-
 + (void)initialize {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        if (sodium_init() == -1) {
-            @throw [NSException exceptionWithName:@"BLESodiumException" reason:@"sodium_init failed!" userInfo:nil];
-        }
-    });
+    initializeLibsodium();
 }
 
 + (NSData*) signatureForData:(NSData*)data privateKey:(NSData*)privateKey {

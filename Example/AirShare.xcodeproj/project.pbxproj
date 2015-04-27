@@ -15,6 +15,7 @@
 		8503C6F50072AFFDEB7BFC18 /* Pods_AirShareDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 267F359032BFEDDDD7B009A4 /* Pods_AirShareDemo.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		D9111E221A71BDA4004AFD08 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D9111E211A71BDA4004AFD08 /* libz.dylib */; };
 		D9111E2E1A71EA0B004AFD08 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9111E2D1A71EA0B004AFD08 /* MediaPlayer.framework */; };
+		D924B4A61AE05C2500CF8A4C /* BLECryptoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D924B4A51AE05C2500CF8A4C /* BLECryptoTests.m */; };
 		D9914B8F1A96B55900D4066F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D9914B851A96B55900D4066F /* AppDelegate.m */; };
 		D9914B901A96B55900D4066F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9914B861A96B55900D4066F /* LaunchScreen.xib */; };
 		D9914B921A96B55900D4066F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9914B8A1A96B55900D4066F /* Images.xcassets */; };
@@ -42,6 +43,7 @@
 		D9111DB51A71B9C1004AFD08 /* AirShareDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AirShareDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9111E211A71BDA4004AFD08 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		D9111E2D1A71EA0B004AFD08 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		D924B4A51AE05C2500CF8A4C /* BLECryptoTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BLECryptoTests.m; sourceTree = "<group>"; };
 		D9914B801A96B2B800D4066F /* AirShare.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = AirShare.podspec; path = ../AirShare.podspec; sourceTree = "<group>"; };
 		D9914B841A96B55900D4066F /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D9914B851A96B55900D4066F /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				D9C89F3B1A6F0624001C8ECA /* AirShareTests.m */,
+				D924B4A51AE05C2500CF8A4C /* BLECryptoTests.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 			);
 			path = Tests;
@@ -375,6 +378,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D924B4A61AE05C2500CF8A4C /* BLECryptoTests.m in Sources */,
 				D9C89F3C1A6F0624001C8ECA /* AirShareTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
