@@ -80,13 +80,6 @@
     return NO;
 }
 
-- (BOOL) sendStream:(NSInputStream*)inputStream
-       toIdentifier:(NSString*)identifier
-           withMode:(BLETransportSendDataMode)mode
-              error:(NSError**)error {
-    
-}
-
 #pragma mark BLEBluetoothDeviceDelegate
 
 - (void) device:(BLEBluetoothDevice*)device

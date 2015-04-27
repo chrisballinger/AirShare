@@ -29,14 +29,6 @@
     return NO;
 }
 
-- (BOOL) sendStream:(NSInputStream*)inputStream
-       toIdentifier:(NSString*)identifier
-           withMode:(BLETransportSendDataMode)mode
-              error:(NSError**)error {
-    NSAssert(NO, @"BLETransport is abstract, use concrete subclass");
-    return NO;
-}
-
 - (void) scan {}
 - (void) advertise {}
 - (void) stop {}

@@ -51,10 +51,6 @@ identifierUpdated:(NSString*)identifier
      toIdentifier:(NSString*)identifier
             error:(NSError**)error;
 
-- (BOOL) sendStream:(NSInputStream*)inputStream
-       toIdentifier:(NSString *)identifier
-              error:(NSError**)error;
-
 - (BOOL) hasSeenIdentifier:(NSString*)identifier;
 
 

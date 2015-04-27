@@ -32,11 +32,6 @@
     return NO;
 }
 
-- (BOOL) sendStream:(NSInputStream*)inputStream
-       toIdentifier:(NSString *)identifier
-              error:(NSError**)error {
-    return NO;
-}
 
 - (BOOL) hasSeenIdentifier:(NSString*)identifier {
     return NO;

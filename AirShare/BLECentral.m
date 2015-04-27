@@ -48,12 +48,6 @@
     return YES;
 }
 
-- (BOOL) sendStream:(NSInputStream*)inputStream
-       toIdentifier:(NSString *)identifier
-              error:(NSError**)error {
-    
-}
-
 - (void) sendQueuedDataForConnectedPeripheral:(CBPeripheral*)peripheral {
     NSData *data = [self.dataQueue peekDataForIdentifier:peripheral.identifier.UUIDString];
     if (!data) {
