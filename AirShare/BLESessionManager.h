@@ -18,7 +18,8 @@
 
 - (void) sessionManager:(BLESessionManager *)sessionManager
                    peer:(BLERemotePeer *)peer
-          statusUpdated:(BLEConnectionStatus)status;
+          statusUpdated:(BLEConnectionStatus)status
+             peerIsHost:(BOOL)peerIsHost;
 
 - (void) sessionManager:(BLESessionManager *)sessionManager
         receivedMessage:(BLESessionMessage*)message

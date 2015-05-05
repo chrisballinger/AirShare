@@ -14,6 +14,8 @@
 
 @interface BLESessionManager() <BLESessionMessageReceiverDelegate>
 @property (nonatomic, strong, readonly) NSMutableSet *transports;
+
+@property (nonatomic, strong, readonly) NSMutableSet *hostIdentifiers;
 /** identifier -> peer */
 @property (nonatomic, strong, readonly) NSMutableDictionary *identifiersToPeers;
 
@@ -28,6 +30,7 @@
     if (self = [super init]) {
         _localPeer = localPeer;
         _transports = [NSMutableSet set];
+        _hostIdentifiers = [NSMutableSet set];
         _delegateQueue = dispatch_queue_create("BLESessionManagerDelegate Queue", 0);
         _identifiersToPeers = [NSMutableDictionary dictionary];
         _identifiersUndergoingPeerDiscovery = [NSMutableSet set];
@@ -104,6 +107,7 @@
 - (void) transport:(BLETransport*)transport
  identifierUpdated:(NSString*)identifier
   connectionStatus:(BLEConnectionStatus)connectionStatus
+  isIdentifierHost:(BOOL)identifierIsHost
          extraInfo:(NSDictionary*)extraInfo {
     NSLog(@"identifierUpdated: %@ %d %@", identifier, (int)connectionStatus, extraInfo);
     BLERemotePeer *peer = [self peerForIdentifier:identifier];
@@ -114,13 +118,18 @@
         // We shouldn't mark this peer as undergoing discovery until the identity message is acknowledged
         // However, we don't monitor dataSenttoIdentifer yet.
         [self.identifiersUndergoingPeerDiscovery addObject:identifier];
-        BLEIdentityMessage *identityMessage = [[BLEIdentityMessage alloc] initWithPeer:self.localPeer];
-        [transport sendData:identityMessage.serializedData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
         
+        if (identifierIsHost) {
+            [self.hostIdentifiers addObject:identifier];
+            BLEIdentityMessage *identityMessage = [[BLEIdentityMessage alloc] initWithPeer:self.localPeer];
+            [transport sendData:identityMessage.serializedData toIdentifiers:@[identifier] withMode:BLETransportSendDataReliable error:&error];
+        }
+                
     } else if (connectionStatus == BLEConnectionStatusDisconnected) {
         [self.receiverForIdentifier removeObjectForKey:identifier];
         [self.identifiersUndergoingPeerDiscovery removeObject:identifier];
         [self.identifiersToPeers removeObjectForKey:identifier];
+        [self.hostIdentifiers removeObject:identifier];
     }
     
     if (peer) {
@@ -129,7 +138,7 @@
         peer.lastSeenDate = [NSDate date];
         [peer.identifiers addObject:identifier];
         dispatch_async(self.delegateQueue, ^{
-            [self.delegate sessionManager:self peer:peer statusUpdated:connectionStatus];
+            [self.delegate sessionManager:self peer:peer statusUpdated:connectionStatus peerIsHost:identifierIsHost];
         });
     }
 }
@@ -162,6 +171,7 @@
     [self.receiverForIdentifier removeObjectForKey:identifier];
     
     if ([message isKindOfClass:[BLEDataMessage class]]) {
+        // this message is not internal to AirShare, so it is handled by our delegate
     } else if ([message isKindOfClass:[BLEIdentityMessage class]]) {
         BLEIdentityMessage *identityMessage = (BLEIdentityMessage*)message;
         NSString *identifier = receiver.context;
@@ -183,7 +193,7 @@
         }
         peer.lastSeenDate = [NSDate date];
         dispatch_async(self.delegateQueue, ^{
-            [self.delegate sessionManager:self peer:peer statusUpdated:BLEConnectionStatusConnected];
+            [self.delegate sessionManager:self peer:peer statusUpdated:BLEConnectionStatusConnected peerIsHost:[self.hostIdentifiers containsObject:identifier]];
         });
     }
     BLERemotePeer *peer = [self peerForIdentifier:identifier];

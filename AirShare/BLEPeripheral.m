@@ -126,6 +126,10 @@
 - (void) peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
     [self.subscribedCentrals setObject:central forKey:central.identifier.UUIDString];
     NSLog(@"peripheralManager:didSubscribeToCharacteristic: %@ %@", central, characteristic);
+    
+    dispatch_async(self.delegateQueue, ^{
+        [self.delegate device:self identifierUpdated:central.identifier.UUIDString status:BLEConnectionStatusConnected extraInfo:nil];
+    });
 }
 
 - (void) peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didUnsubscribeFromCharacteristic:(CBCharacteristic *)characteristic {

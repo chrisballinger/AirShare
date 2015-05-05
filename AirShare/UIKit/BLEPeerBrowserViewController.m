@@ -120,7 +120,8 @@
 
 - (void) sessionManager:(BLESessionManager *)sessionManager
                    peer:(BLERemotePeer *)peer
-          statusUpdated:(BLEConnectionStatus)status {
+          statusUpdated:(BLEConnectionStatus)status
+             peerIsHost:(BOOL)peerIsHost {
     NSUInteger index = [self.peers indexOfObjectPassingTest:^BOOL(BLERemotePeer *testPeer, NSUInteger idx, BOOL *stop) {
         if ([peer.publicKey isEqual:testPeer.publicKey]) {
             *stop = YES;

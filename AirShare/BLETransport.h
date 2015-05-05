@@ -37,6 +37,7 @@ typedef NS_ENUM(NSInteger, BLEConnectionStatus) {
 - (void) transport:(BLETransport*)transport
  identifierUpdated:(NSString*)identifier
   connectionStatus:(BLEConnectionStatus)connectionStatus
+  isIdentifierHost:(BOOL)identifierIsHost
          extraInfo:(NSDictionary*)extraInfo;
 
 @end

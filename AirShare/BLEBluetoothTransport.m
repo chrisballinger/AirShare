@@ -103,8 +103,12 @@
 identifierUpdated:(NSString*)identifier
          status:(BLEConnectionStatus)status
       extraInfo:(NSDictionary*)extraInfo {
+    
+    // The BLE Central device always plays the client role, so all its connections are to hosts
+    BOOL isIdentifierHost = [device isKindOfClass:[BLECentral class]];
+    
     dispatch_async(self.delegateQueue, ^{
-        [self.delegate transport:self identifierUpdated:identifier connectionStatus:status extraInfo:extraInfo];
+        [self.delegate transport:self identifierUpdated:identifier connectionStatus:status isIdentifierHost:isIdentifierHost extraInfo:extraInfo];
     });
 }
 
