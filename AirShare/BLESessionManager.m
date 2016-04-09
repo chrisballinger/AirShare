@@ -35,6 +35,7 @@
         _identifiersToPeers = [NSMutableDictionary dictionary];
         _identifiersUndergoingPeerDiscovery = [NSMutableSet set];
         _receiverForIdentifier = [NSMutableDictionary dictionary];
+        [self setDelegate: delegate];
         [self registerTransports];
     }
     return self;
